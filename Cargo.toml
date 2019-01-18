@@ -1,0 +1,9 @@
+[package]
+name = "climer"
+version = "0.0.0"
+authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
+edition = "2018"
+description = "CLI timer app"
+
+[dependencies]
+clap = "2.32.0"
