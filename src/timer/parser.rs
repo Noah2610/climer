@@ -68,8 +68,8 @@ fn parse_time_with_format(time: &str, format: &str) -> ClimerResult<Time> {
 #[cfg(test)]
 mod tests {
     use std::time::Duration;
+    use crate::time::prelude::*;
     use super::{ parse_time, last_number };
-    use super::super::time::{ Time, TimeBuilder };
 
     fn get_expected_time() -> Time {
         TimeBuilder::new()

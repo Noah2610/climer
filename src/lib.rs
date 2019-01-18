@@ -5,21 +5,22 @@ mod macros;
 mod settings;
 mod error;
 mod cli;
+mod time;
 mod timer;
 
 use self::error::*;
 use self::timer::{ Timer, TimerBuilder };
 
 pub fn run() -> ClimerResult {
-
     let matches = cli::parse();
-    //let time: &str = matches.value_of("time").unwrap();
     if let Some(times) = matches.values_of("time") {
-        let timer = TimerBuilder::new(&times.collect::<String>())
-            .build()?;
-        //timer.run()?;
-    } else {
-
+        let time = &times.collect::<String>();
+        let mut builder = TimerBuilder::new(time);
+        if let Some(format) = matches.value_of("format") {
+            builder = builder.format(format);
+        }
+        let mut timer = builder.build()?;
+        timer.run()?;
     }
     Ok(())
 }
