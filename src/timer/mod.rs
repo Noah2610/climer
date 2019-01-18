@@ -36,7 +36,7 @@ impl<'a> Timer<'a> {
 
     fn update(&mut self) -> ClimerResult {
         if let Some(output) = &mut self.output {
-            output.update()?;
+            output.update(&self.time)?;
         }
         Ok(())
     }

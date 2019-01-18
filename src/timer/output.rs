@@ -23,13 +23,18 @@ impl<'a> Output<'a> {
         Self::new( DEFAULT_FORMAT )
     }
 
-    pub fn update(&mut self) -> ClimerResult {
+    pub fn update(&mut self, time: &Time) -> ClimerResult {
+        self.print(time)?;
         Ok(())
     }
 
-    fn print(&mut self) -> ClimerResult {
+    fn print(&mut self, time: &Time) -> ClimerResult {
         let now = Instant::now();
-        //if now - self.last_print < Duration::from_millis(self.print_interval.milliseconds()) {
+        if now - self.last_print < Duration::from_millis(self.print_interval.as_milliseconds() as u64) {
+            return Ok(());
+        }
+        println!("{}", time);
+        self.last_print = now;
         Ok(())
     }
 }

@@ -1,4 +1,6 @@
 extern crate clap;
+#[macro_use]
+extern crate climer_derive;
 
 #[macro_use]
 mod macros;

@@ -7,3 +7,4 @@ description = "CLI timer app"
 
 [dependencies]
 clap = "2.32.0"
+climer_derive = { path = "./climer_derive" }

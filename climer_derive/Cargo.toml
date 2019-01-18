@@ -1,0 +1,12 @@
+[package]
+name = "climer_derive"
+version = "0.1.0"
+authors = ["Noah Rosenzweig <noah@aware.vision>"]
+edition = "2018"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = "0.15.26"
+quote = "0.6.10"
