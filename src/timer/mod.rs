@@ -1,6 +1,5 @@
 mod builder;
 mod output;
-mod parser;
 
 use std::time::Duration;
 
@@ -9,7 +8,7 @@ pub use self::output::Output;
 use crate::time::{ Time, TimeBuilder };
 use crate::settings::timer::*;
 use crate::error::ClimerResult;
-use self::parser::parse_time;
+use crate::time::parser::parse_time;
 
 pub struct Timer<'a> {
     time:    Time,
