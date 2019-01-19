@@ -3,11 +3,11 @@ extern crate clap;
 extern crate climer_derive;
 
 #[macro_use]
-mod macros;
+pub mod macros;
+pub mod error;
+pub mod time;
 mod settings;
-mod error;
 mod cli;
-mod time;
 mod timer;
 
 use self::error::*;
