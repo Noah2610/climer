@@ -36,6 +36,7 @@ pub mod parser {
         pub const MINUTE:      char = 'M';
         pub const SECOND:      char = 'S';
         pub const MILLISECOND: char = 'm';
+        pub const NANOSECOND:  char = 'n';
     }
 }
 

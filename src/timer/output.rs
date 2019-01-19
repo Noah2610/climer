@@ -24,17 +24,17 @@ impl<'a> Output<'a> {
     }
 
     pub fn update(&mut self, time: &Time) -> ClimerResult {
-        self.print(time)?;
-        Ok(())
-    }
-
-    fn print(&mut self, time: &Time) -> ClimerResult {
         let now = Instant::now();
         if now - self.last_print < Duration::from_millis(self.print_interval.as_milliseconds() as u64) {
             return Ok(());
         }
-        println!("{}", time);
+        self.print(time)?;
         self.last_print = now;
+        Ok(())
+    }
+
+    pub fn print(&mut self, time: &Time) -> ClimerResult {
+        println!("{}", time);
         Ok(())
     }
 }

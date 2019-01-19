@@ -7,6 +7,7 @@ fn get_expected_time() -> Time {
         minutes:      10,
         seconds:      20,
         milliseconds: 500,
+        nanoseconds:  0,
     }
 }
 

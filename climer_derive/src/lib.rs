@@ -1,3 +1,4 @@
+#![recursion_limit="128"]
 extern crate proc_macro;
 
 use crate::proc_macro::TokenStream;
@@ -30,6 +31,9 @@ fn impl_time_conversion(ast: &DeriveInput) -> TokenStream {
             fn ms(&self) -> u32 {
                 self.milliseconds
             }
+            fn ns(&self) -> u32 {
+                self.nanoseconds
+            }
 
             fn set_h(&mut self, h: u32) {
                 self.hours = h;
@@ -42,6 +46,9 @@ fn impl_time_conversion(ast: &DeriveInput) -> TokenStream {
             }
             fn set_ms(&mut self, ms: u32) {
                 self.milliseconds = ms;
+            }
+            fn set_ns(&mut self, ns: u32) {
+                self.nanoseconds = ns;
             }
         }
     };

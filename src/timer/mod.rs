@@ -1,7 +1,7 @@
 mod builder;
 mod output;
 
-use std::time::Duration;
+use std::time::{ Instant, Duration };
 
 pub use self::builder::TimerBuilder;
 pub use self::output::Output;
@@ -11,22 +11,27 @@ use crate::error::ClimerResult;
 use crate::time::parser::parse_time;
 
 pub struct Timer<'a> {
-    time:    Time,
-    output:  Option<Output<'a>>,
-    running: bool,
+    target_time: Time,
+    time:        Time,
+    output:      Option<Output<'a>>,
+    running:     bool,
+    last_update: Instant,
 }
 
 impl<'a> Timer<'a> {
     pub fn new(time: &str, format: Option<&str>, output: Option<Output<'a>>) -> ClimerResult<Self> {
         Ok(Self {
-            time: parse_time(time, format)?,
+            target_time: parse_time(time, format)?,
+            time:        Time::zero(),
             output,
-            running: false,
+            running:     false,
+            last_update: Instant::now(),
         })
     }
 
     pub fn run(&mut self) -> ClimerResult {
         self.running = true;
+        self.last_update = Instant::now();
         while self.running {
             self.update()?;
         }
@@ -34,10 +39,25 @@ impl<'a> Timer<'a> {
     }
 
     fn update(&mut self) -> ClimerResult {
+        let now = Instant::now();
         if let Some(output) = &mut self.output {
             output.update(&self.time)?;
+        }
+        let duration = now.duration_since(self.last_update);
+        let time_since = Time::from(duration);
+        self.time += time_since;
+        self.check_finished()?;
+        self.last_update = now;
+        Ok(())
+    }
+
+    fn check_finished(&mut self) -> ClimerResult {
+        if self.time >= self.target_time {
+            if let Some(output) = &mut self.output {
+                output.print(&self.time)?;
+            }
+            self.running = false;
         }
         Ok(())
     }
 }
-

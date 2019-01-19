@@ -9,6 +9,7 @@ enum TimeType {
     Minute,
     Second,
     Millisecond,
+    Nanosecond,
 }
 
 pub fn parse_time(time: &str, format_opt: Option<&str>) -> ClimerResult<Time> {
@@ -26,7 +27,8 @@ fn parse_time_without_format(time: &str) -> ClimerResult<Time> {
         (Hour, HOUR),
         (Minute, MINUTE),
         (Second, SECOND),
-        (Millisecond, MILLISECOND)
+        (Millisecond, MILLISECOND),
+        (Nanosecond, NANOSECOND)
     ].iter() {
         if let Some(pos) = time.find(*letter) {
             if let Some(num) = last_number(&time[0 .. pos]) {
@@ -35,6 +37,7 @@ fn parse_time_without_format(time: &str) -> ClimerResult<Time> {
                     Minute      => builder.minutes(num),
                     Second      => builder.seconds(num),
                     Millisecond => builder.milliseconds(num),
+                    Nanosecond  => builder.nanoseconds(num),
                 };
             } else {
                 // Time char was given without a value

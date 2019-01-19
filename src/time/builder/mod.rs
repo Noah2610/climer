@@ -6,11 +6,12 @@ pub struct TimeBuilder {
     minutes:      u32,
     seconds:      u32,
     milliseconds: u32,
+    nanoseconds:  u32,
 }
 
 impl TimeBuilder {
     pub fn new() -> Self {
-        Self { hours: 0, minutes: 0, seconds: 0, milliseconds: 0 }
+        Self { hours: 0, minutes: 0, seconds: 0, milliseconds: 0, nanoseconds: 0 }
     }
 
     pub fn hours(mut self, hours: u32) -> Self {
@@ -37,12 +38,19 @@ impl TimeBuilder {
         self
     }
 
+    pub fn nanoseconds(mut self, nanoseconds: u32) -> Self {
+        self.nanoseconds = 0;
+        self.add_nanoseconds(nanoseconds);
+        self
+    }
+
     pub fn build(self) -> Time {
         Time::new(
             self.hours,
             self.minutes,
             self.seconds,
-            self.milliseconds
+            self.milliseconds,
+            self.nanoseconds
         )
     }
 }
