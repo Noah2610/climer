@@ -15,17 +15,17 @@ use std::cmp::{ self, Ordering };
 pub use self::builder::TimeBuilder;
 pub use self::time_conversion::TimeConversion;
 
-#[derive(Debug, PartialEq, TimeConversion)]
+#[derive(Debug, Clone, Copy, PartialEq, TimeConversion)]
 pub struct Time {
-    hours:        u32,
-    minutes:      u32,
-    seconds:      u32,
-    milliseconds: u32,
-    nanoseconds:  u32,
+    hours:        u64,
+    minutes:      u64,
+    seconds:      u64,
+    milliseconds: u64,
+    nanoseconds:  u64,
 }
 
 impl Time {
-    pub fn new(hours: u32, minutes: u32, seconds: u32, milliseconds: u32, nanoseconds: u32) -> Self {
+    pub fn new(hours: u64, minutes: u64, seconds: u64, milliseconds: u64, nanoseconds: u64) -> Self {
         Self { hours, minutes, seconds, milliseconds, nanoseconds }
     }
 
@@ -83,8 +83,8 @@ impl fmt::Display for Time {
 impl From<Duration> for Time {
     fn from(duration: Duration) -> Self {
         let new = TimeBuilder::new()
-            .seconds(duration.as_secs() as u32)
-            .nanoseconds(duration.subsec_nanos() as u32)
+            .seconds(duration.as_secs() as u64)
+            .nanoseconds(duration.subsec_nanos() as u64)
             .build();
         new
     }
@@ -112,6 +112,34 @@ impl ops::AddAssign for Time {
         self.add_nanoseconds(other.ns());
     }
 }
+
+impl ops::Sub for Time {
+    type Output = Time;
+    fn sub(self, other: Time) -> Self {
+        let mut nanoseconds = self.as_nanoseconds() as u64 - other.as_nanoseconds() as u64;
+        let mut milliseconds = nanoseconds / 1_000_000;
+        nanoseconds -= milliseconds * 1_000_000;
+        let mut seconds = milliseconds / 1000;
+        milliseconds -= seconds * 1000;
+        let mut minutes = seconds / 60;
+        seconds -= minutes * 60;
+        let hours = minutes / 60;
+        minutes -= hours * 60;
+        TimeBuilder::new()
+            .hours(hours)
+            .minutes(minutes)
+            .seconds(seconds)
+            .milliseconds(milliseconds)
+            .nanoseconds(nanoseconds)
+            .build()
+    }
+}
+
+// TODO
+// impl ops::SubAssign for Time {
+//     fn sub_assign(&mut self, other: Time) {
+//     }
+// }
 
 impl cmp::PartialOrd for Time {
     fn partial_cmp(&self, other: &Time) -> Option<Ordering> {

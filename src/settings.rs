@@ -28,6 +28,7 @@ pub mod args {
 }
 
 pub mod timer {
+    pub const FINISH_TEXT: &'static str = "Time's Up!";
 }
 
 pub mod parser {
@@ -42,5 +43,5 @@ pub mod parser {
 
 pub mod output {
     pub const DEFAULT_FORMAT: &'static str = "%H:%M:%S";
-    pub const DEFAULT_PRINT_INTERVAL_MS: u32 = 250;
+    pub const DEFAULT_PRINT_INTERVAL_MS: u64 = 10;
 }

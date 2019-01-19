@@ -49,7 +49,7 @@ fn parse_time_without_format(time: &str) -> ClimerResult<Time> {
     Ok(builder.build())
 }
 
-fn last_number(s: &str) -> Option<u32> {
+fn last_number(s: &str) -> Option<u64> {
     if s.is_empty() { return None; }
     let mut s = s.to_string();
     while !s.chars().last().unwrap().is_digit(10) {

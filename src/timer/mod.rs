@@ -40,8 +40,9 @@ impl<'a> Timer<'a> {
 
     fn update(&mut self) -> ClimerResult {
         let now = Instant::now();
+        let time_output = self.time_output();
         if let Some(output) = &mut self.output {
-            output.update(&self.time)?;
+            output.update(&time_output)?;
         }
         let duration = now.duration_since(self.last_update);
         let time_since = Time::from(duration);
@@ -53,11 +54,22 @@ impl<'a> Timer<'a> {
 
     fn check_finished(&mut self) -> ClimerResult {
         if self.time >= self.target_time {
+            let time_output = self.time_output();
             if let Some(output) = &mut self.output {
-                output.print(&self.time)?;
+                //output.print(&time_output)?;
+                println!("\n{}", FINISH_TEXT);
             }
             self.running = false;
         }
         Ok(())
+    }
+
+    fn time_output(&self) -> Time {
+        if self.target_time < self.time {
+            return Time::zero();
+        };
+        let ret = self.target_time - self.time;
+        //println!("{}", ret);
+        ret
     }
 }

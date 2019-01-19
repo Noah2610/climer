@@ -19,35 +19,35 @@ fn impl_time_conversion(ast: &DeriveInput) -> TokenStream {
     let struct_name = &ast.ident;
     let gen = quote! {
         impl TimeConversion for #struct_name {
-            fn h(&self)  -> u32 {
+            fn h(&self)  -> u64 {
                 self.hours
             }
-            fn m(&self)  -> u32 {
+            fn m(&self)  -> u64 {
                 self.minutes
             }
-            fn s(&self)  -> u32 {
+            fn s(&self)  -> u64 {
                 self.seconds
             }
-            fn ms(&self) -> u32 {
+            fn ms(&self) -> u64 {
                 self.milliseconds
             }
-            fn ns(&self) -> u32 {
+            fn ns(&self) -> u64 {
                 self.nanoseconds
             }
 
-            fn set_h(&mut self, h: u32) {
+            fn set_h(&mut self, h: u64) {
                 self.hours = h;
             }
-            fn set_m(&mut self, m: u32) {
+            fn set_m(&mut self, m: u64) {
                 self.minutes = m;
             }
-            fn set_s(&mut self, s: u32) {
+            fn set_s(&mut self, s: u64) {
                 self.seconds = s;
             }
-            fn set_ms(&mut self, ms: u32) {
+            fn set_ms(&mut self, ms: u64) {
                 self.milliseconds = ms;
             }
-            fn set_ns(&mut self, ns: u32) {
+            fn set_ns(&mut self, ns: u64) {
                 self.nanoseconds = ns;
             }
         }
