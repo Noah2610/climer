@@ -26,16 +26,3 @@ pub fn run() -> ClimerResult {
     }
     Ok(())
 }
-
-use std::io::{ self, Write };
-use std::thread::sleep;
-use std::time::Duration;
-
-fn stdout_test() {
-    for i in 1 ..= 10 {
-        print!("\r");
-        print!("{}", i);
-        io::stdout().flush();
-        sleep(Duration::new(1, 0));
-    }
-}

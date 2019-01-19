@@ -42,5 +42,5 @@ pub mod parser {
 
 pub mod output {
     pub const DEFAULT_FORMAT: &'static str = "%H:%M:%S";
-    pub const DEFAULT_PRINT_INTERVAL_MS: u32 = 500;
+    pub const DEFAULT_PRINT_INTERVAL_MS: u32 = 250;
 }

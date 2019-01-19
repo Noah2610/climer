@@ -1,4 +1,5 @@
 use std::time::{ Instant, Duration };
+use std::io::{ self, Write };
 
 use crate::settings::output::*;
 use crate::error::{ ClimerResult, ClimerError };
@@ -34,7 +35,8 @@ impl<'a> Output<'a> {
     }
 
     pub fn print(&mut self, time: &Time) -> ClimerResult {
-        println!("{}", time);
+        print!("\r{}", time);
+        io::stdout().flush();
         Ok(())
     }
 }
