@@ -11,6 +11,11 @@ pub mod args {
         pub const LONG_HELP: &'static str = "LONG_HELP FOR TIME";
     }
 
+    pub mod quiet {
+        pub const HELP:      &'static str = "Quiet; don't print anything to stdout";
+        pub const LONG_HELP: &'static str = "LONG_HELP FOR QUIET";
+    }
+
     pub mod format {
         pub const HELP:      &'static str = "Format for time input as string";
         pub const LONG_HELP: &'static str = "LONG_HELP FOR FORMAT";
@@ -21,9 +26,9 @@ pub mod args {
         pub const LONG_HELP: &'static str = "LONG_HELP FOR OUTPUT";
     }
 
-    pub mod quiet {
-        pub const HELP:      &'static str = "Quiet; don't print anything to stdout";
-        pub const LONG_HELP: &'static str = "LONG_HELP FOR QUIET";
+    pub mod write {
+        pub const HELP:      &'static str = "Write time to file instead of stdout";
+        pub const LONG_HELP: &'static str = "LONG_HELP FOR WRITE";
     }
 }
 
@@ -43,5 +48,5 @@ pub mod parser {
 
 pub mod output {
     pub const DEFAULT_FORMAT: &'static str = "%H:%M:%S";
-    pub const DEFAULT_PRINT_INTERVAL_MS: u64 = 10;
+    pub const DEFAULT_PRINT_INTERVAL_MS: u64 = 100;
 }

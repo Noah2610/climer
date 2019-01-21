@@ -7,19 +7,26 @@ use super::Output;
 
 pub struct TimerBuilder<'a> {
     time:    &'a str,
+    quiet:   bool,
     format:  Option<&'a str>,
     output:  Option<&'a str>,
-    quiet:   bool,
+    write:   Option<&'a str>,
 }
 
 impl<'a> TimerBuilder<'a> {
     pub fn new(time: &'a str) -> Self {
         Self {
             time,
+            quiet:  false,
             format: None,
             output: None,
-            quiet:  false,
+            write:  None,
         }
+    }
+
+    pub fn quiet(mut self, quiet: bool) -> Self {
+        self.quiet = quiet;
+        self
     }
 
     pub fn format(mut self, format: &'a str) -> Self {
@@ -27,8 +34,8 @@ impl<'a> TimerBuilder<'a> {
         self
     }
 
-    pub fn quiet(mut self, quiet: bool) -> Self {
-        self.quiet = quiet;
+    pub fn write(mut self, write: &'a str) -> Self {
+        self.write = Some(write);
         self
     }
 
@@ -44,11 +51,7 @@ impl<'a> TimerBuilder<'a> {
         if self.quiet {
             None
         } else {
-            Some(if let Some(output) = self.output {
-                Output::new(output)
-            } else {
-                Output::new_with_default()
-            })
+            Some(Output::new(self.output, self.write))
         }
     }
 }

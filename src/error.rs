@@ -34,7 +34,7 @@ impl fmt::Display for ClimerError {
                        feature),
                 _ =>
                 write!(f,
-                       "ClimerError {:?}", self)
+                       "{}", self)
         }
     }
 }

@@ -24,6 +24,10 @@ pub fn run() -> ClimerResult {
             builder = builder.format(format);
         }
 
+        if let Some(write) = matches.value_of("write") {
+            builder = builder.write(write);
+        }
+
         builder = builder.quiet(matches.is_present("quiet"));
 
         let mut timer = builder.build()?;

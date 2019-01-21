@@ -13,10 +13,12 @@ pub fn parse_time(time: &str, format_opt: Option<&str>) -> ClimerResult<Time> {
 }
 
 fn parse_time_without_format(time: &str) -> ClimerResult<Time> {
+    let replace_re = Regex::new(r"\s").unwrap();
+    let time = &replace_re.replace_all(time, "");
     let mut builder = TimeBuilder::new();
     let mut remaining_input = time.to_string();
-    let re = Regex::new(r"(?P<num>\d+)(?P<ident>[a-zA-Z]+)").unwrap();
-    for caps in re.captures_iter(time) {
+    let input_re = Regex::new(r"(?P<num>\d+)(?P<ident>[a-zA-Z]+)").unwrap();
+    for caps in input_re.captures_iter(time) {
         remaining_input = remaining_input.replace(&caps[0], "");
         let num = caps["num"].parse().expect("Should unwrap to integer");
         match &caps["ident"] {
