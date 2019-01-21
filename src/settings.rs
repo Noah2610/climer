@@ -26,6 +26,11 @@ pub mod args {
         pub const LONG_HELP: &'static str = "LONG_HELP FOR OUTPUT";
     }
 
+    pub mod print_interval {
+        pub const HELP:      &'static str = "Interval in milliseconds between prints";
+        pub const LONG_HELP: &'static str = "LONG_HELP FOR PRINT_INTERVAL";
+    }
+
     pub mod write {
         pub const HELP:      &'static str = "Write time to file instead of stdout";
         pub const LONG_HELP: &'static str = "LONG_HELP FOR WRITE";

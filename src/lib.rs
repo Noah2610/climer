@@ -13,6 +13,7 @@ mod timer;
 
 use self::error::*;
 use self::timer::TimerBuilder;
+use self::time::TimeBuilder;
 
 pub fn run() -> ClimerResult {
     let matches = cli::parse();
@@ -22,6 +23,15 @@ pub fn run() -> ClimerResult {
 
         if let Some(format) = matches.value_of("format") {
             builder = builder.format(format);
+        }
+
+        if let Some(print_interval_str) = matches.value_of("print_interval") {
+            let print_interval_ms = if let Ok(ms) = print_interval_str.parse() {
+                ms
+            } else {
+                return Err(ClimerError::InvalidPrintIntervalValue(print_interval_str.to_string()));
+            };
+            builder = builder.print_interval(TimeBuilder::new().milliseconds(print_interval_ms).build());
         }
 
         if let Some(write) = matches.value_of("write") {

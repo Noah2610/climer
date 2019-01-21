@@ -8,6 +8,7 @@ pub enum ClimerError {
     NoTimeIdentifierValue(String),
     InvalidTimeIdentifier(String),
     InvalidInput(String),
+    InvalidPrintIntervalValue(String),
     Unimplemented(String),
     UnknownError(String),
 }
@@ -28,11 +29,15 @@ impl fmt::Display for ClimerError {
                 write!(f,
                        "This part of the input could not be parsed: '{}'",
                        input),
+            InvalidPrintIntervalValue(value) =>
+                write!(f,
+                       "Invalid value for '--interval': {}\nExpected an integer value",
+                       value),
             Unimplemented(feature) =>
                 write!(f,
                        "Sorry, this feature is not implemented yet ('{}')",
                        feature),
-                _ =>
+            _ =>
                 write!(f,
                        "{}", self)
         }

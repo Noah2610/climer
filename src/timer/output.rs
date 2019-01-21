@@ -15,11 +15,13 @@ pub struct Output<'a> {
 }
 
 impl<'a> Output<'a> {
-    pub fn new(format: Option<&'a str>, write_to_file: Option<&'a str>) -> Self {
+    pub fn new(format: Option<&'a str>, print_interval: Option<Time>, write_to_file: Option<&'a str>) -> Self {
         Self {
             format:         format.unwrap_or(DEFAULT_FORMAT),
             write_to_file,
-            print_interval: TimeBuilder::new().milliseconds(DEFAULT_PRINT_INTERVAL_MS).build(),
+            print_interval: print_interval.unwrap_or(
+                TimeBuilder::new().milliseconds(DEFAULT_PRINT_INTERVAL_MS).build()
+            ),
             last_print:     Instant::now(),
         }
     }

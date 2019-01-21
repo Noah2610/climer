@@ -2,25 +2,28 @@ use std::time::Duration;
 
 use crate::settings::timer;
 use crate::ClimerResult;
+use crate::time::Time;
 use super::Timer;
 use super::Output;
 
 pub struct TimerBuilder<'a> {
-    time:    &'a str,
-    quiet:   bool,
-    format:  Option<&'a str>,
-    output:  Option<&'a str>,
-    write:   Option<&'a str>,
+    time:           &'a str,
+    quiet:          bool,
+    format:         Option<&'a str>,
+    output:         Option<&'a str>,
+    print_interval: Option<Time>,
+    write:          Option<&'a str>,
 }
 
 impl<'a> TimerBuilder<'a> {
     pub fn new(time: &'a str) -> Self {
         Self {
             time,
-            quiet:  false,
-            format: None,
-            output: None,
-            write:  None,
+            quiet:          false,
+            format:         None,
+            output:         None,
+            print_interval: None,
+            write:          None,
         }
     }
 
@@ -31,6 +34,11 @@ impl<'a> TimerBuilder<'a> {
 
     pub fn format(mut self, format: &'a str) -> Self {
         self.format = Some(format);
+        self
+    }
+
+    pub fn print_interval(mut self, print_interval: Time) -> Self {
+        self.print_interval = Some(print_interval);
         self
     }
 
@@ -51,7 +59,7 @@ impl<'a> TimerBuilder<'a> {
         if self.quiet {
             None
         } else {
-            Some(Output::new(self.output, self.write))
+            Some(Output::new(self.output, self.print_interval, self.write))
         }
     }
 }
