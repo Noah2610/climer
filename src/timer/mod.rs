@@ -56,7 +56,7 @@ impl<'a> Timer<'a> {
         if self.time >= self.target_time {
             let time_output = self.time_output();
             if let Some(output) = &mut self.output {
-                //output.print(&time_output)?;
+                output.print(&time_output)?;
                 println!("\n{}", FINISH_TEXT);
             }
             self.running = false;
@@ -69,7 +69,6 @@ impl<'a> Timer<'a> {
             return Time::zero();
         };
         let ret = self.target_time - self.time;
-        //println!("{}", ret);
         ret
     }
 }

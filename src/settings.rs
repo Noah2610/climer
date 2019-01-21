@@ -33,11 +33,11 @@ pub mod timer {
 
 pub mod parser {
     pub mod codes {
-        pub const HOUR:        char = 'H';
-        pub const MINUTE:      char = 'M';
-        pub const SECOND:      char = 'S';
-        pub const MILLISECOND: char = 'm';
-        pub const NANOSECOND:  char = 'n';
+        pub const HOUR:        &'static str = "h";
+        pub const MINUTE:      &'static str = "m";
+        pub const SECOND:      &'static str = "s";
+        pub const MILLISECOND: &'static str = "ms";
+        pub const NANOSECOND:  &'static str = "ns";
     }
 }
 

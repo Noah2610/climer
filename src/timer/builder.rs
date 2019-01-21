@@ -27,6 +27,11 @@ impl<'a> TimerBuilder<'a> {
         self
     }
 
+    pub fn quiet(mut self, quiet: bool) -> Self {
+        self.quiet = quiet;
+        self
+    }
+
     pub fn build(&self) -> ClimerResult<Timer> {
         Ok(Timer::new(
                 self.time,

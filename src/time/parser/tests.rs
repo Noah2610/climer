@@ -1,6 +1,6 @@
 use std::time::Duration;
 use crate::time::prelude::*;
-use super::{ parse_time, last_number };
+use super::parse_time;
 
 fn get_expected_time() -> Time {
     TimeBuilder::new()
@@ -24,8 +24,8 @@ fn parse_time_with_format_with_punctuations() {
 }
 
 #[test]
-fn parse_time_with_denominators() {
-    let input    = "10M20S";
+fn parse_time_with_identifiers() {
+    let input    = "10m20s";
     let expected = TimeBuilder::new()
         .minutes(10)
         .seconds(20)
@@ -34,8 +34,8 @@ fn parse_time_with_denominators() {
 }
 
 #[test]
-fn parse_time_with_denominators_with_whitespace() {
-    let input    = "10M  20S";
+fn parse_time_with_identifiers_with_whitespace() {
+    let input    = "10m  20s";
     let expected = TimeBuilder::new()
         .minutes(10)
         .seconds(20)
@@ -44,8 +44,8 @@ fn parse_time_with_denominators_with_whitespace() {
 }
 
 #[test]
-fn parse_time_with_denominators_out_of_order() {
-    let input    = "20S 10M";
+fn parse_time_with_identifiers_out_of_order() {
+    let input    = "20s 10m";
     let expected = TimeBuilder::new()
         .minutes(10)
         .seconds(20)
@@ -54,61 +54,14 @@ fn parse_time_with_denominators_out_of_order() {
 }
 
 #[test]
-fn last_number_with_pure_number() {
-    let s = "1234";
-    assert_eq!(last_number(s), Some(1234));
-}
-
-#[test]
-fn last_number_with_trailing_char() {
-    let s = "1234abc";
-    assert_eq!(last_number(s), Some(1234));
-}
-
-#[test]
-fn last_number_with_leading_char() {
-    let s = "abc1234";
-    assert_eq!(last_number(s), Some(1234));
-}
-
-#[test]
-fn last_number_with_leading_and_trailing_char() {
-    let s = "abc1234def";
-    assert_eq!(last_number(s), Some(1234));
-}
-
-#[test]
-fn last_number_with_multiple_nums() {
-    let s = "123abc456";
-    assert_eq!(last_number(s), Some(456));
-}
-
-#[test]
-fn last_number_with_multiple_nums_and_trailing_char() {
-    let s = "123abc456def";
-    assert_eq!(last_number(s), Some(456));
-}
-
-#[test]
-fn last_number_with_multiple_nums_and_leading_char() {
-    let s = "abc123def456";
-    assert_eq!(last_number(s), Some(456));
-}
-
-#[test]
-fn last_number_with_multiple_nums_and_leading_and_trailing_char() {
-    let s = "abc123def456ghi";
-    assert_eq!(last_number(s), Some(456));
-}
-
-#[test]
-fn last_number_with_pure_string() {
-    let s = "abc";
-    assert_eq!(last_number(s), None);
-}
-
-#[test]
-fn last_number_with_empty_string() {
-    let s = "";
-    assert_eq!(last_number(s), None);
+fn parse_time_with_all_identifiers() {
+    let input    = "1h 5m 25s 500ms 500000ns";
+    let expected = TimeBuilder::new()
+        .hours(1)
+        .minutes(5)
+        .seconds(25)
+        .milliseconds(500)
+        .nanoseconds(500000)
+        .build();
+    assert_eq!(parse_time(input, None).unwrap(), expected);
 }

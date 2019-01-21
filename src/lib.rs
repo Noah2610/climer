@@ -1,3 +1,4 @@
+extern crate regex;
 extern crate clap;
 #[macro_use]
 extern crate climer_derive;
@@ -18,9 +19,13 @@ pub fn run() -> ClimerResult {
     if let Some(times) = matches.values_of("time") {
         let time = &times.collect::<String>();
         let mut builder = TimerBuilder::new(time);
+
         if let Some(format) = matches.value_of("format") {
             builder = builder.format(format);
         }
+
+        builder = builder.quiet(matches.is_present("quiet"));
+
         let mut timer = builder.build()?;
         timer.run()?;
     }

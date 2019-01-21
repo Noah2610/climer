@@ -5,16 +5,26 @@ use std::error::Error;
 
 #[derive(Debug)]
 pub enum ClimerError {
-    NoTimeCharValue(char),
+    NoTimeIdentifierValue(String),
+    InvalidTimeIdentifier(String),
     UnknownError(String),
 }
 
 impl fmt::Display for ClimerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::ClimerError::*;
-        match *self {
-            NoTimeCharValue(c) => write!(f, "Time character '{}' was given without a value", c),
-            _                  => write!(f, "ClimerError {:?}", self)
+        match self {
+            NoTimeIdentifierValue(c) =>
+                write!(f,
+                       "Time string '{}' was given without a value\nExample: '10{}'",
+                       c, c),
+            InvalidTimeIdentifier(input) =>
+                write!(f,
+                       "Invalid time identifier '{}'",
+                       input),
+            _ =>
+                write!(f,
+                       "ClimerError {:?}", self)
         }
     }
 }
