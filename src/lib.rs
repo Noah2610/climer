@@ -12,7 +12,7 @@ mod cli;
 mod timer;
 
 use self::error::*;
-use self::timer::{ Timer, TimerBuilder };
+use self::timer::TimerBuilder;
 
 pub fn run() -> ClimerResult {
     let matches = cli::parse();

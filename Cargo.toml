@@ -9,3 +9,7 @@ description = "CLI timer app"
 regex = "1.1.0"
 clap = "2.32.0"
 climer_derive = { path = "./climer_derive" }
+
+[[bin]]
+name = "climer"
+path = "src/main.rs"

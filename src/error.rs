@@ -7,6 +7,8 @@ use std::error::Error;
 pub enum ClimerError {
     NoTimeIdentifierValue(String),
     InvalidTimeIdentifier(String),
+    InvalidInput(String),
+    Unimplemented(String),
     UnknownError(String),
 }
 
@@ -20,9 +22,17 @@ impl fmt::Display for ClimerError {
                        c, c),
             InvalidTimeIdentifier(input) =>
                 write!(f,
-                       "Invalid time identifier '{}'",
+                       "Invalid time identifier: '{}'",
                        input),
-            _ =>
+            InvalidInput(input) =>
+                write!(f,
+                       "This part of the input could not be parsed: '{}'",
+                       input),
+            Unimplemented(feature) =>
+                write!(f,
+                       "Sorry, this feature is not implemented yet ('{}')",
+                       feature),
+                _ =>
                 write!(f,
                        "ClimerError {:?}", self)
         }
