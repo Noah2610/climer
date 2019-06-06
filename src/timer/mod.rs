@@ -1,30 +1,37 @@
 mod builder;
 mod output;
 
-use std::time::{ Instant, Duration };
+use std::thread::sleep;
+use std::time::{Duration, Instant};
 
 pub use self::builder::TimerBuilder;
 pub use self::output::Output;
-use crate::time::{ Time, TimeBuilder };
-use crate::settings::timer::*;
 use crate::error::ClimerResult;
+use crate::settings::timer::*;
 use crate::time::parser::parse_time;
+use crate::time::{Time, TimeBuilder};
 
 pub struct Timer<'a> {
-    target_time: Time,
-    time:        Time,
-    output:      Option<Output<'a>>,
-    running:     bool,
-    last_update: Instant,
+    target_time:     Time,
+    time:            Time,
+    output:          Option<Output<'a>>,
+    running:         bool,
+    update_delay_ms: u64,
+    last_update:     Instant,
 }
 
 impl<'a> Timer<'a> {
-    pub fn new(time: &str, format: Option<&str>, output: Option<Output<'a>>) -> ClimerResult<Self> {
+    pub fn new(
+        time: &str,
+        format: Option<&str>,
+        output: Option<Output<'a>>,
+    ) -> ClimerResult<Self> {
         Ok(Self {
             target_time: parse_time(time, format)?,
-            time:        Time::zero(),
+            time: Time::zero(),
             output,
-            running:     false,
+            running: false,
+            update_delay_ms: 100, // TODO
             last_update: Instant::now(),
         })
     }
@@ -34,6 +41,7 @@ impl<'a> Timer<'a> {
         self.last_update = Instant::now();
         while self.running {
             self.update()?;
+            sleep(Duration::from_millis(self.update_delay_ms))
         }
         Ok(())
     }
