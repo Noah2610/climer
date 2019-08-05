@@ -1,19 +1,20 @@
-extern crate regex;
+#[macro_use]
 extern crate clap;
+extern crate regex;
 #[macro_use]
 extern crate climer_derive;
 
 #[macro_use]
 pub mod macros;
-pub mod error;
-pub mod time;
-mod settings;
 mod cli;
+pub mod error;
+mod settings;
+pub mod time;
 mod timer;
 
 use self::error::*;
-use self::timer::TimerBuilder;
 use self::time::TimeBuilder;
+use self::timer::TimerBuilder;
 
 pub fn run() -> ClimerResult {
     let matches = cli::parse();
@@ -29,9 +30,13 @@ pub fn run() -> ClimerResult {
             let print_interval_ms = if let Ok(ms) = print_interval_str.parse() {
                 ms
             } else {
-                return Err(ClimerError::InvalidPrintIntervalValue(print_interval_str.to_string()));
+                return Err(ClimerError::InvalidPrintIntervalValue(
+                    print_interval_str.to_string(),
+                ));
             };
-            builder = builder.print_interval(TimeBuilder::new().milliseconds(print_interval_ms).build());
+            builder = builder.print_interval(
+                TimeBuilder::new().milliseconds(print_interval_ms).build(),
+            );
         }
 
         if let Some(write) = matches.value_of("write") {
