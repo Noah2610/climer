@@ -1,35 +1,35 @@
 pub mod meta {
-    pub const NAME: &'static str = "Climer";
-    pub const AUTHOR: &'static str =
-        "Noah Rosenzweig <rosenzweig.noah@gmail.com>";
+    pub const NAME: &'static str = "climer";
     pub const ABOUT: &'static str = "Simple command-line timer app.";
 }
 
 pub mod args {
     pub mod time {
-        pub const HELP: &'static str = "Time input as string";
+        pub const HELP: &'static str = "Time input as string.";
         pub const LONG_HELP: &'static str = "Time input as semantic string.
 The input follows the pattern of
   `<NUM><UNIT>`
 where <NUM> can be any number, and <UNIT> is a time unit such as
-  `h` for _hours_
-  `m` for _minutes_
-  `s` for _seconds_";
+  `h`  for _hours_
+  `m`  for _minutes_
+  `s`  for _seconds_
+  `ms` for _milliseconds_
+  `ns` for _nanoseconds_";
     }
 
     pub mod quiet {
-        pub const HELP: &'static str = "Quiet; don't print anything to stdout";
-        pub const LONG_HELP: &'static str = "LONG_HELP FOR QUIET";
+        pub const HELP: &'static str = "Quiet; don't print anything to stdout.";
+        pub const LONG_HELP: &'static str = HELP;
     }
 
     pub mod format {
         pub const HELP: &'static str =
-            "(UNIMPLEMENTED) Format for time input as string";
+            "(UNIMPLEMENTED) Format for time input as string.";
         pub const LONG_HELP: &'static str = HELP;
     }
 
     pub mod output {
-        pub const HELP: &'static str = "Custom output format during timer";
+        pub const HELP: &'static str = "Custom output format during timer.";
         pub const LONG_HELP: &'static str = "LONG_HELP FOR OUTPUT";
     }
 

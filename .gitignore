@@ -1,3 +1,4 @@
 /target
 /*_derive/target
 **/*.rs.bk
+/bin/util.sh
