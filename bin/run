@@ -1,0 +1,18 @@
+#!/bin/bash
+# shellcheck source=./util.sh
+_dir="$( dirname "$0" )"
+[ -f "${_dir}/util.sh" ] || bash "${_dir}/download-util.sh" || exit 1
+source "${_dir}/util.sh"
+unset _dir
+
+function main {
+  local cmd="cargo run -- $*"
+  cmd="${cmd}; echo -e \"\n----------\n[CONTINUE]\"; read -n1"
+  if should_run_in_terminal; then
+    run_terminal "$cmd"
+  else
+    $cmd
+  fi
+}
+
+main "$@"
