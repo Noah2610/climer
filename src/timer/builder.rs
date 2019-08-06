@@ -1,10 +1,10 @@
 use std::time::Duration;
 
-use crate::settings::timer;
-use crate::ClimerResult;
-use crate::time::Time;
-use super::Timer;
 use super::Output;
+use super::Timer;
+use crate::settings::timer;
+use crate::time::Time;
+use crate::ClimerResult;
 
 pub struct TimerBuilder<'a> {
     time:           &'a str,
@@ -19,11 +19,11 @@ impl<'a> TimerBuilder<'a> {
     pub fn new(time: &'a str) -> Self {
         Self {
             time,
-            quiet:          false,
-            format:         None,
-            output:         None,
+            quiet: false,
+            format: None,
+            output: None,
             print_interval: None,
-            write:          None,
+            write: None,
         }
     }
 
@@ -48,11 +48,7 @@ impl<'a> TimerBuilder<'a> {
     }
 
     pub fn build(&self) -> ClimerResult<Timer> {
-        Ok(Timer::new(
-                self.time,
-                self.format,
-                self.build_output()
-        )?)
+        Ok(Timer::new(self.time, self.format, self.build_output())?)
     }
 
     fn build_output(&self) -> Option<Output> {

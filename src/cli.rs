@@ -25,21 +25,21 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .long("quiet"),
         )
         .arg(
-            Arg::with_name("format")
+            Arg::with_name("format") // TODO
                 .help(args::format::HELP)
                 .long_help(args::format::LONG_HELP)
                 .short("f")
                 .long("format")
                 .takes_value(true),
         )
-        .arg(
-            Arg::with_name("output") // TODO
-                .help(args::output::HELP)
-                .long_help(args::output::LONG_HELP)
-                .short("o")
-                .long("output")
-                .takes_value(true),
-        )
+        // .arg(
+        //     Arg::with_name("output") // TODO
+        //         .help(args::output::HELP)
+        //         .long_help(args::output::LONG_HELP)
+        //         .short("o")
+        //         .long("output")
+        //         .takes_value(true),
+        // )
         .arg(
             Arg::with_name("print_interval")
                 .help(args::print_interval::HELP)
