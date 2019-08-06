@@ -4,6 +4,10 @@ version = "0.0.2"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 description = "CLI timer app"
+repository = "https://github.com/Noah2610/climer"
+keywords = ["timer", "cli", "command-line"]
+categories = ["command-line-utilities"]
+license = "MIT"
 
 [dependencies]
 regex = "1.1.0"

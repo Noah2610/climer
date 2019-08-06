@@ -5,9 +5,16 @@ A simple CLI timer, written in Rust.
 This project's main use is as a CLI app, but it can also be used as a crate / library.
 
 ### Installation
-From [crates.io] \(__TODO__):
+#### From [crates.io]
+__(TODO: Not yet published)__
 ```
 cargo install climer
+```
+#### From source
+You will need `cargo` to compile from source, which is shipped with Rust.  
+```
+git clone https://github.com/Noah2610/climer # Clone the repository
+cargo install --path ./climer                # Compile and install
 ```
 
 ### Usage
@@ -25,8 +32,8 @@ climer 1h 2m 30s && mpv ~/Music/alarm.mp3
 
 For more detailed usage information, check out the help page with:
 ```
-climer -h      # brief help
-climer --help  # more detailed help
+climer -h      # Brief help
+climer --help  # More detailed help
 ```
 
 [crates.io]: https://crates.io/crates/climer
