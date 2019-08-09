@@ -1,7 +1,8 @@
 //! Error and Result types. Trying to be an idiomatic Rustacean.
 
-use std::fmt;
 use std::error::Error;
+use std::fmt;
+use std::io;
 
 #[derive(Debug)]
 pub enum ClimerError {
@@ -9,6 +10,7 @@ pub enum ClimerError {
     InvalidTimeIdentifier(String),
     InvalidInput(String),
     InvalidPrintIntervalValue(String),
+    IoError(String),
     Unimplemented(String),
     UnknownError(String),
 }
@@ -17,33 +19,42 @@ impl fmt::Display for ClimerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::ClimerError::*;
         match self {
-            NoTimeIdentifierValue(c) =>
-                write!(f,
-                       "Time string '{}' was given without a value\nExample: '10{}'",
-                       c, c),
-            InvalidTimeIdentifier(input) =>
-                write!(f,
-                       "Invalid time identifier: '{}'",
-                       input),
-            InvalidInput(input) =>
-                write!(f,
-                       "This part of the input could not be parsed: '{}'",
-                       input),
-            InvalidPrintIntervalValue(value) =>
-                write!(f,
-                       "Invalid value for '--interval': {}\nExpected an integer value",
-                       value),
-            Unimplemented(feature) =>
-                write!(f,
-                       "Sorry, this feature is not implemented yet ('{}')",
-                       feature),
-            _ =>
-                write!(f,
-                       "{}", self)
+            NoTimeIdentifierValue(c) => write!(
+                f,
+                "Time string '{}' was given without a value\nExample: '10{}'",
+                c, c
+            ),
+            InvalidTimeIdentifier(input) => {
+                write!(f, "Invalid time identifier: '{}'", input)
+            }
+            InvalidInput(input) => write!(
+                f,
+                "This part of the input could not be parsed: '{}'",
+                input
+            ),
+            InvalidPrintIntervalValue(value) => write!(
+                f,
+                "Invalid value for '--interval': {}\nExpected an integer value",
+                value
+            ),
+            IoError(err) => write!(f, "IO error: {}", err),
+            Unimplemented(feature) => write!(
+                f,
+                "Sorry, this feature is not implemented yet ('{}')",
+                feature
+            ),
+            _ => write!(f, "{}", self),
         }
     }
 }
 
-impl Error for ClimerError {}
+impl Error for ClimerError {
+}
+
+impl From<io::Error> for ClimerError {
+    fn from(io_error: io::Error) -> Self {
+        ClimerError::IoError(io_error.to_string())
+    }
+}
 
 pub type ClimerResult<T = ()> = Result<T, ClimerError>;

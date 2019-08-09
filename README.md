@@ -11,7 +11,7 @@ __(TODO: Not yet published)__
 cargo install climer
 ```
 #### From source
-You will need `cargo` to compile from source, which is shipped with Rust.  
+You will need `cargo` to compile from source, which is shipped with Rust.
 ```
 git clone https://github.com/Noah2610/climer # Clone the repository
 cargo install --path ./climer                # Compile and install
@@ -24,7 +24,7 @@ climer 2m 30s
 ```
 This will run the timer and print a readable representation of the remaining time to `stdout`.  
 When the time is up, the app will simply exit with exit code `0`,  
-so it is up to you to then play an alarm sound or whatever you want it to trigger,  
+so it is up to you to then play an alarm sound or whatever you may want it to trigger;  
 for example:
 ```
 climer 1h 2m 30s && mpv ~/Music/alarm.mp3

@@ -9,5 +9,6 @@ mod settings;
 pub mod macros;
 pub mod cli;
 pub mod error;
+pub mod helpers;
 pub mod time;
 pub mod timer;

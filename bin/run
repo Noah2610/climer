@@ -6,8 +6,8 @@ source "${_dir}/util.sh"
 unset _dir
 
 function main {
-  local cmd="cargo run -- $*"
-  cmd="${cmd}; echo -e \"\n----------\n[CONTINUE]\"; read -n1"
+  check "less"
+  local cmd="cargo run -- $* 2>&1 | less"
   if should_run_in_terminal; then
     run_terminal "$cmd"
   else

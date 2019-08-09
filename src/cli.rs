@@ -1,6 +1,5 @@
-use clap::{App, Arg, ArgMatches, SubCommand};
+use clap::{App, Arg, ArgMatches};
 
-use crate::error::*;
 use crate::settings::args;
 use crate::settings::meta::*;
 
@@ -9,6 +8,7 @@ pub fn parse<'a>() -> ArgMatches<'a> {
         .version(crate_version!())
         .author(crate_authors!())
         .about(ABOUT)
+        .after_help(AFTER_HELP)
         .arg(
             Arg::with_name("time")
                 .help(args::time::HELP)

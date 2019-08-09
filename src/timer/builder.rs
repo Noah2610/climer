@@ -1,10 +1,7 @@
-use std::time::Duration;
-
 use super::Output;
 use super::Timer;
-use crate::settings::timer;
 use crate::time::Time;
-use crate::ClimerResult;
+use crate::error::ClimerResult;
 
 pub struct TimerBuilder<'a> {
     time:           &'a str,
