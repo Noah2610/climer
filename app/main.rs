@@ -1,6 +1,9 @@
+#[macro_use]
+extern crate clap;
 extern crate climer;
 
-use climer::cli;
+mod cli;
+
 use climer::error::*;
 use climer::time::TimeBuilder;
 use climer::timer::TimerBuilder;

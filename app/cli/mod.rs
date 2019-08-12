@@ -1,7 +1,9 @@
+mod settings;
+
 use clap::{App, Arg, ArgMatches};
 
-use crate::settings::args;
-use crate::settings::meta::*;
+use settings::args;
+use settings::meta::*;
 
 pub fn parse<'a>() -> ArgMatches<'a> {
     App::new(NAME)

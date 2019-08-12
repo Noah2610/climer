@@ -7,13 +7,13 @@ This project's main use is as a CLI app, but it can also be used as a crate / li
 ### Installation
 #### From [crates.io]
 ```
-cargo install climer
+cargo install climer --features cli
 ```
 #### From source
 You will need `cargo` to compile from source, which is shipped with Rust.
 ```
 git clone https://github.com/Noah2610/climer # Clone the repository
-cargo install --path ./climer                # Compile and install
+cargo install --path ./climer --features cli # Compile and install
 ```
 
 ### Usage

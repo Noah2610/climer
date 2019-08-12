@@ -1,6 +1,6 @@
 use super::Output;
 use super::Timer;
-use crate::error::{ClimerError, ClimerResult};
+use crate::error::ClimerResult;
 use crate::time::parser::parse_time;
 use crate::time::Time;
 

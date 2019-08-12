@@ -7,7 +7,7 @@ unset _dir
 
 function main {
   check "less"
-  local cmd="cargo run -- $*; echo '[CONTINUE]'; read"
+  local cmd="cargo run --features cli -- $*; echo '[CONTINUE]'; read"
   if should_run_in_terminal; then
     run_terminal "$cmd"
   else
