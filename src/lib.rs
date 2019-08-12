@@ -15,3 +15,5 @@ pub mod prelude {
     pub use super::timer::output::Output;
     pub use super::timer::{Timer, TimerBuilder, TimerState};
 }
+
+pub use prelude::*;

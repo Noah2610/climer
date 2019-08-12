@@ -99,28 +99,17 @@ impl Timer {
     /// Only call this method if you intend to update the timer manually
     /// by calling the `update` method.
     pub fn start(&mut self) -> ClimerResult {
-        if self.state.is_stopped() || self.state.is_finished() {
-            self.state = TimerState::Running;
-            let now = Instant::now();
-            self.last_update = Some(now);
-            Ok(())
-        } else {
-            Err(ClimerError::TimerAlreadyRunning)
-        }
+        self.state = TimerState::Running;
+        let now = Instant::now();
+        self.last_update = Some(now);
+        Ok(())
     }
 
     /// Stops the timer, after it has been started using the `start` method.
     pub fn stop(&mut self) -> ClimerResult {
-        if self.state.is_running()
-            || self.state.is_paused()
-            || self.state.is_finished()
-        {
-            self.state = TimerState::Stopped;
-            self.last_update = None;
-            Ok(())
-        } else {
-            Err(ClimerError::TimerNotRunning)
-        }
+        self.state = TimerState::Stopped;
+        self.last_update = None;
+        Ok(())
     }
 
     /// Pauses the timer.
@@ -153,23 +142,16 @@ impl Timer {
     /// This will also attempt to write the remaining time to stdout or to a file,
     /// using the `Output` of this `Timer`.
     pub fn update(&mut self) -> ClimerResult {
-        match &self.state {
-            TimerState::Running => {
-                let now = Instant::now();
-                self.print_output()?;
-                let duration =
-                    now.duration_since(self.last_update.unwrap_or(now));
-                let time_since = Time::from(duration);
-                self.time += time_since;
-                if self.target_time.is_some() {
-                    self.check_finished()?;
-                }
-                self.last_update = Some(now);
-                Ok(())
-            }
-            TimerState::Paused => Ok(()),
-            _ => Err(ClimerError::TimerNotRunning),
+        let now = Instant::now();
+        self.print_output()?;
+        let duration = now.duration_since(self.last_update.unwrap_or(now));
+        let time_since = Time::from(duration);
+        self.time += time_since;
+        if self.target_time.is_some() {
+            self.check_finished()?;
         }
+        self.last_update = Some(now);
+        Ok(())
     }
 
     /// Print the current time to stdout or to a file using this timer's `Output`
@@ -220,11 +202,11 @@ impl Timer {
         }
     }
 
-    /// Finish the timer. This method should only be called from `check_finished`, which verifies
-    /// that the timer has actually finished.
-    fn finish(&mut self) -> ClimerResult {
+    /// Finish the timer.
+    pub fn finish(&mut self) -> ClimerResult {
+        self.stop()?;
         self.state = TimerState::Finished;
-        self.stop()
+        Ok(())
     }
 }
 
