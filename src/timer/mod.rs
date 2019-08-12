@@ -142,16 +142,22 @@ impl Timer {
     /// This will also attempt to write the remaining time to stdout or to a file,
     /// using the `Output` of this `Timer`.
     pub fn update(&mut self) -> ClimerResult {
-        let now = Instant::now();
-        self.print_output()?;
-        let duration = now.duration_since(self.last_update.unwrap_or(now));
-        let time_since = Time::from(duration);
-        self.time += time_since;
-        if self.target_time.is_some() {
-            self.check_finished()?;
+        match &self.state {
+            TimerState::Running => {
+                let now = Instant::now();
+                self.print_output()?;
+                let duration =
+                    now.duration_since(self.last_update.unwrap_or(now));
+                let time_since = Time::from(duration);
+                self.time += time_since;
+                if self.target_time.is_some() {
+                    self.check_finished()?;
+                }
+                self.last_update = Some(now);
+                Ok(())
+            }
+            _ => Ok(()),
         }
-        self.last_update = Some(now);
-        Ok(())
     }
 
     /// Print the current time to stdout or to a file using this timer's `Output`
