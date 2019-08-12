@@ -52,7 +52,7 @@ dependencies = [
 
 [[package]]
 name = "climer"
-version = "0.0.4"
+version = "0.1.0"
 dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "climer_derive 0.1.0",

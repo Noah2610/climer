@@ -1,10 +1,12 @@
 use super::Output;
 use super::Timer;
-use crate::error::ClimerResult;
+use crate::error::{ClimerError, ClimerResult};
 use crate::time::Time;
 
+/// The builder struct for `Timer`.
+#[derive(Default)]
 pub struct TimerBuilder {
-    time:           String,
+    time:           Option<String>,
     quiet:          bool,
     format:         Option<String>,
     output_format:  Option<String>,
@@ -13,25 +15,23 @@ pub struct TimerBuilder {
 }
 
 impl TimerBuilder {
-    pub fn new<T>(time: T) -> Self
+    /// Set the `time` as a string.
+    pub fn time<T>(mut self, time: T) -> Self
     where
         T: ToString,
     {
-        Self {
-            time:           time.to_string(),
-            quiet:          false,
-            format:         None,
-            output_format:  None,
-            print_interval: None,
-            write:          None,
-        }
+        self.time = Some(time.to_string());
+        self
     }
 
+    /// Set the `quiet` flag, used for printing to stdout.
     pub fn quiet(mut self, quiet: bool) -> Self {
         self.quiet = quiet;
         self
     }
 
+    /// TODO: Unimplemented
+    /// Set the `format` string, used for parsing the given time string.
     pub fn format<T>(mut self, format: T) -> Self
     where
         T: ToString,
@@ -40,11 +40,13 @@ impl TimerBuilder {
         self
     }
 
+    /// Set the interval in which output should be printed to stdout.
     pub fn print_interval(mut self, print_interval: Time) -> Self {
         self.print_interval = Some(print_interval);
         self
     }
 
+    /// Set a file for the output to be written to, instead of stdout.
     pub fn write<T>(mut self, write: T) -> Self
     where
         T: ToString,
@@ -53,13 +55,19 @@ impl TimerBuilder {
         self
     }
 
+    /// Build a `Timer`.
     pub fn build(self) -> ClimerResult<Timer> {
-        let time = self.time.clone();
+        let time = if let Some(t) = self.time.clone() {
+            t
+        } else {
+            return Err(ClimerError::NoTimeGiven);
+        };
         let format = self.format.clone();
         let output = self.build_output();
         Ok(Timer::new(time, format, output)?)
     }
 
+    /// Build the `Output` used by the `Timer`.
     fn build_output(self) -> Option<Output> {
         if self.quiet {
             None

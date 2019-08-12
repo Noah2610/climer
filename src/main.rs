@@ -9,7 +9,7 @@ fn main() -> ClimerResult {
     let matches = cli::parse();
     if let Some(times) = matches.values_of("time") {
         let time = &times.collect::<String>();
-        let mut builder = TimerBuilder::new(time);
+        let mut builder = TimerBuilder::default().time(time);
 
         if let Some(format) = matches.value_of("format") {
             builder = builder.format(format);

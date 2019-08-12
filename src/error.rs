@@ -6,6 +6,9 @@ use std::io;
 
 #[derive(Debug)]
 pub enum ClimerError {
+    NoTimeGiven,
+    TimerAlreadyRunning,
+    TimerNotRunning,
     NoTimeIdentifierValue(String),
     InvalidTimeIdentifier(String),
     InvalidInput(String),
@@ -19,6 +22,18 @@ impl fmt::Display for ClimerError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         use self::ClimerError::*;
         match self {
+            NoTimeGiven => write!(f, "A time value must be given"),
+            TimerAlreadyRunning => write!(
+                f,
+                "This timer is already running. Call the `stop` method before \
+                 calling `start` again, or use the `restart` method"
+            ),
+            TimerNotRunning => write!(
+                f,
+                "This timer is not running. Call the `start` method before \
+                 calling methods such as `update` or `stop`, which require \
+                 the timer to be running before-hand"
+            ),
             NoTimeIdentifierValue(c) => write!(
                 f,
                 "Time string '{}' was given without a value\nExample: '10{}'",
