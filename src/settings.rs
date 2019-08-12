@@ -7,12 +7,12 @@ EXAMPLES:
         climer 2m10s
     Set a timer which only updates every second and writes its output to \
                                           `./remaining_time`.
-        climer -i 1000 -w ./remaining_time 1h 30m
+        climer -i 1000 1h 30m > ./remaining_time
     Print the output to a file, play an audio file when the timer finishes,
     and disown the climer process, so we can close the shell.
     We can then read from the output file somewhere else to display the \
                                           remaining time.
-        climer -i 500 -w $HOME/.remaining_time 2m30s && \\
+        climer -i 500 2m30s > $HOME/.remaining_time && \\
             mpv $HOME/Music/alarm.mp3 & \\
             disown
         # Now we could check the time from anywhere by reading from \
