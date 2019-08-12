@@ -6,7 +6,6 @@ This project's main use is as a CLI app, but it can also be used as a crate / li
 
 ### Installation
 #### From [crates.io]
-__(TODO: Not yet published)__
 ```
 cargo install climer
 ```
@@ -35,5 +34,8 @@ For more detailed usage information, check out the help page with:
 climer -h      # Brief help
 climer --help  # More detailed help
 ```
+
+## As a crate
+__TODO__
 
 [crates.io]: https://crates.io/crates/climer
