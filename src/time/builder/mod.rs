@@ -1,4 +1,4 @@
-use super::{ Time, TimeConversion };
+use super::{Time, TimeConversion};
 
 #[derive(TimeConversion)]
 pub struct TimeBuilder {
@@ -11,7 +11,13 @@ pub struct TimeBuilder {
 
 impl TimeBuilder {
     pub fn new() -> Self {
-        Self { hours: 0, minutes: 0, seconds: 0, milliseconds: 0, nanoseconds: 0 }
+        Self {
+            hours:        0,
+            minutes:      0,
+            seconds:      0,
+            milliseconds: 0,
+            nanoseconds:  0,
+        }
     }
 
     pub fn hours(mut self, hours: u64) -> Self {
@@ -50,7 +56,7 @@ impl TimeBuilder {
             self.minutes,
             self.seconds,
             self.milliseconds,
-            self.nanoseconds
+            self.nanoseconds,
         )
     }
 }

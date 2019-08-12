@@ -32,7 +32,8 @@ NOTE:
 
 pub mod args {
     pub mod time {
-        pub const HELP: &'static str = "Time input as string.";
+        pub const HELP: &'static str =
+            "Time input as string. Acts like a stopwatch if omitted.";
         pub const LONG_HELP: &'static str = "\
 Time input as semantic string.
 The input follows the pattern of
@@ -42,7 +43,10 @@ where <NUM> can be any number, and <UNIT> is a time unit such as
   `m`  for _minutes_
   `s`  for _seconds_
   `ms` for _milliseconds_
-  `ns` for _nanoseconds_";
+  `ns` for _nanoseconds_
+
+If this argument is omitted, then the timer will act like a stopwatch.
+This means, the timer will count upwards and never finish naturally.";
     }
 
     pub mod quiet {

@@ -13,7 +13,7 @@ pub fn parse<'a>() -> ArgMatches<'a> {
             Arg::with_name("time")
                 .help(args::time::HELP)
                 .long_help(args::time::LONG_HELP)
-                .required(true)
+                .required(false)
                 .index(1)
                 .multiple(true),
         )

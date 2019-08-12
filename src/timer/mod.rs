@@ -8,13 +8,12 @@ pub use self::builder::TimerBuilder;
 pub use self::output::Output;
 use crate::error::{ClimerError, ClimerResult};
 use crate::settings::timer::*;
-use crate::time::parser::parse_time;
 use crate::time::Time;
 
 pub struct Timer {
     pub running:     bool,
     pub finished:    bool,
-    target_time:     Time,
+    target_time:     Option<Time>,
     time:            Time,
     output:          Option<Output>,
     update_delay_ms: u64,
@@ -27,21 +26,19 @@ impl Timer {
         TimerBuilder::default()
     }
 
-    /// Create a new `Timer` with the given `time` (string) and
-    /// optional `format` (string) and `output` (`Output`).
-    pub fn new<T, U>(
-        time: T,
-        format: Option<U>,
+    /// Create a new `Timer` with the given optional arguments:
+    /// `target_time` (`Time`), and `output` (`Output`).
+    /// If a `target_time` is given, then the timer will act more like a _countdown_.
+    /// If no `target_time` is given, then the timer will act more like a _stopwatch_;
+    /// it will never finish naturally, so instead you need to stop the timer when necessary.
+    pub fn new(
+        target_time: Option<Time>,
         output: Option<Output>,
-    ) -> ClimerResult<Self>
-    where
-        T: ToString,
-        U: ToString,
-    {
+    ) -> ClimerResult<Self> {
         Ok(Self {
             running: false,
             finished: false,
-            target_time: parse_time(time, format)?,
+            target_time,
             time: Time::zero(),
             output,
             update_delay_ms: 100, // TODO
@@ -71,7 +68,8 @@ impl Timer {
         }
         self.running = true;
         self.finished = false;
-        self.last_update = Some(Instant::now());
+        let now = Instant::now();
+        self.last_update = Some(now);
         Ok(())
     }
 
@@ -101,36 +99,48 @@ impl Timer {
         let duration = now.duration_since(self.last_update.unwrap_or(now));
         let time_since = Time::from(duration);
         self.time += time_since;
-        self.check_finished()?;
+        if self.target_time.is_some() {
+            self.check_finished()?;
+        }
         self.last_update = Some(now);
         Ok(())
     }
 
-    /// Returns a `Time` with the passed time since the timer started.
+    /// Returns a `Time`.
+    /// If a `target_time` was given, then it returns the _remaining time_
+    /// until the timer finishes;
+    /// if no `target_time` was given, then it returns the time since the timer was started.
     pub fn time_output(&self) -> Time {
-        if self.target_time < self.time {
-            return Time::zero();
-        };
-        let ret = self.target_time - self.time;
-        ret
+        if let Some(target_time) = self.target_time {
+            if target_time < self.time {
+                return Time::zero();
+            };
+            target_time - self.time
+        } else {
+            self.time
+        }
     }
 
     /// Check if the timer is finished.
-    /// Returns a `ClimerError` if the timer isn't running.
+    /// Returns a `ClimerError` if the timer isn't running, or no `target_time` was given.
     fn check_finished(&mut self) -> ClimerResult {
         if !self.running {
             return Err(ClimerError::TimerNotRunning);
         }
 
-        if self.time >= self.target_time {
-            //let time_output = self.time_output();
-            if let Some(output) = &mut self.output {
-                //output.print(&format!("{}", time_output))?;
-                output.print(FINISH_TEXT)?;
+        if let Some(target_time) = self.target_time {
+            if self.time >= target_time {
+                //let time_output = self.time_output();
+                if let Some(output) = &mut self.output {
+                    //output.print(&format!("{}", time_output))?;
+                    output.print(FINISH_TEXT)?;
+                }
+                self.finish()?;
             }
-            self.finish()?;
+            Ok(())
+        } else {
+            Err(ClimerError::TimerCannotFinish)
         }
-        Ok(())
     }
 
     /// Finish the timer. This method should only be called from `check_finished`, which verifies

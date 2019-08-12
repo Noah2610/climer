@@ -9,6 +9,7 @@ pub enum ClimerError {
     NoTimeGiven,
     TimerAlreadyRunning,
     TimerNotRunning,
+    TimerCannotFinish,
     NoTimeIdentifierValue(String),
     InvalidTimeIdentifier(String),
     InvalidInput(String),
@@ -26,13 +27,20 @@ impl fmt::Display for ClimerError {
             TimerAlreadyRunning => write!(
                 f,
                 "This timer is already running. Call the `stop` method before \
-                 calling `start` again, or use the `restart` method"
+                 calling `start` again, or use the `restart` method."
             ),
             TimerNotRunning => write!(
                 f,
                 "This timer is not running. Call the `start` method before \
                  calling methods such as `update` or `stop`, which require \
-                 the timer to be running before-hand"
+                 the timer to be running before-hand."
+            ),
+            TimerCannotFinish => write!(
+                f,
+                "This timer will never finish naturally, because no \
+                 `target_time` was given. Methods such as `check_finished` \
+                 cannot be used with this timer. Give this timer a \
+                 `target_time` upon initialization if this is desired."
             ),
             NoTimeIdentifierValue(c) => write!(
                 f,

@@ -1,6 +1,7 @@
 use super::Output;
 use super::Timer;
 use crate::error::{ClimerError, ClimerResult};
+use crate::time::parser::parse_time;
 use crate::time::Time;
 
 /// The builder struct for `Timer`.
@@ -57,14 +58,13 @@ impl TimerBuilder {
 
     /// Build a `Timer`.
     pub fn build(self) -> ClimerResult<Timer> {
-        let time = if let Some(t) = self.time.clone() {
-            t
+        let time = if let Some(time) = self.time.as_ref() {
+            Some(parse_time(time, self.format.as_ref())?)
         } else {
-            return Err(ClimerError::NoTimeGiven);
+            None
         };
-        let format = self.format.clone();
         let output = self.build_output();
-        Ok(Timer::new(time, format, output)?)
+        Ok(Timer::new(time, output)?)
     }
 
     /// Build the `Output` used by the `Timer`.
