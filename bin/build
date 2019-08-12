@@ -6,7 +6,7 @@ source "${_dir}/util.sh"
 unset _dir
 
 function main {
-  local cmd="cargo build $*"
+  local cmd="cargo build $*; echo '[CONTINUE]'; read"
   if should_run_in_terminal; then
     run_terminal "$cmd"
   else
