@@ -64,7 +64,7 @@ impl TimerBuilder {
             None
         };
         let output = self.build_output();
-        Ok(Timer::new(time, output)?)
+        Ok(Timer::new(time, output))
     }
 
     /// Build the `Output` used by the `Timer`.

@@ -31,11 +31,8 @@ impl Timer {
     /// If a `target_time` is given, then the timer will act more like a _countdown_.
     /// If no `target_time` is given, then the timer will act more like a _stopwatch_;
     /// it will never finish naturally, so instead you need to stop the timer when necessary.
-    pub fn new(
-        target_time: Option<Time>,
-        output: Option<Output>,
-    ) -> ClimerResult<Self> {
-        Ok(Self {
+    pub fn new(target_time: Option<Time>, output: Option<Output>) -> Self {
+        Self {
             running: false,
             finished: false,
             target_time,
@@ -43,7 +40,7 @@ impl Timer {
             output,
             update_delay_ms: 100, // TODO
             last_update: None,
-        })
+        }
     }
 
     /// Run the timer.
@@ -92,10 +89,7 @@ impl Timer {
         }
 
         let now = Instant::now();
-        let time_output = self.time_output();
-        if let Some(output) = &mut self.output {
-            output.update(format!("{}", time_output))?;
-        }
+        self.print_output()?;
         let duration = now.duration_since(self.last_update.unwrap_or(now));
         let time_since = Time::from(duration);
         self.time += time_since;
@@ -104,6 +98,17 @@ impl Timer {
         }
         self.last_update = Some(now);
         Ok(())
+    }
+
+    /// Print the current time to stdout or to a file using this timer's `Output`
+    /// (if output exists).
+    pub fn print_output(&mut self) -> ClimerResult {
+        let time_output = self.time_output();
+        if let Some(output) = &mut self.output {
+            output.update(format!("{}", time_output))
+        } else {
+            Ok(())
+        }
     }
 
     /// Returns a `Time`.
@@ -148,5 +153,11 @@ impl Timer {
     fn finish(&mut self) -> ClimerResult {
         self.finished = true;
         self.stop()
+    }
+}
+
+impl Default for Timer {
+    fn default() -> Self {
+        Self::new(None, None)
     }
 }
