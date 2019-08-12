@@ -3,24 +3,27 @@ use super::Timer;
 use crate::error::ClimerResult;
 use crate::time::Time;
 
-pub struct TimerBuilder<'a> {
-    time:           &'a str,
+pub struct TimerBuilder {
+    time:           String,
     quiet:          bool,
-    format:         Option<&'a str>,
-    output_format:  Option<&'a str>,
+    format:         Option<String>,
+    output_format:  Option<String>,
     print_interval: Option<Time>,
-    write:          Option<&'a str>,
+    write:          Option<String>,
 }
 
-impl<'a> TimerBuilder<'a> {
-    pub fn new(time: &'a str) -> Self {
+impl TimerBuilder {
+    pub fn new<T>(time: T) -> Self
+    where
+        T: ToString,
+    {
         Self {
-            time,
-            quiet: false,
-            format: None,
-            output_format: None,
+            time:           time.to_string(),
+            quiet:          false,
+            format:         None,
+            output_format:  None,
             print_interval: None,
-            write: None,
+            write:          None,
         }
     }
 
@@ -29,8 +32,11 @@ impl<'a> TimerBuilder<'a> {
         self
     }
 
-    pub fn format(mut self, format: &'a str) -> Self {
-        self.format = Some(format);
+    pub fn format<T>(mut self, format: T) -> Self
+    where
+        T: ToString,
+    {
+        self.format = Some(format.to_string());
         self
     }
 
@@ -39,16 +45,22 @@ impl<'a> TimerBuilder<'a> {
         self
     }
 
-    pub fn write(mut self, write: &'a str) -> Self {
-        self.write = Some(write);
+    pub fn write<T>(mut self, write: T) -> Self
+    where
+        T: ToString,
+    {
+        self.write = Some(write.to_string());
         self
     }
 
-    pub fn build(self) -> ClimerResult<Timer<'a>> {
-        Ok(Timer::new(self.time, self.format, self.build_output())?)
+    pub fn build(self) -> ClimerResult<Timer> {
+        let time = self.time.clone();
+        let format = self.format.clone();
+        let output = self.build_output();
+        Ok(Timer::new(time, format, output)?)
     }
 
-    fn build_output(self) -> Option<Output<'a>> {
+    fn build_output(self) -> Option<Output> {
         if self.quiet {
             None
         } else {

@@ -1,5 +1,5 @@
 mod builder;
-mod output;
+pub mod output;
 
 use std::thread::sleep;
 use std::time::{Duration, Instant};
@@ -11,21 +11,25 @@ use crate::settings::timer::*;
 use crate::time::parser::parse_time;
 use crate::time::Time;
 
-pub struct Timer<'a> {
+pub struct Timer {
     target_time:     Time,
     time:            Time,
-    output:          Option<Output<'a>>,
+    output:          Option<Output>,
     running:         bool,
     update_delay_ms: u64,
     last_update:     Instant,
 }
 
-impl<'a> Timer<'a> {
-    pub fn new(
-        time: &str,
-        format: Option<&str>,
-        output: Option<Output<'a>>,
-    ) -> ClimerResult<Self> {
+impl Timer {
+    pub fn new<T, U>(
+        time: T,
+        format: Option<U>,
+        output: Option<Output>,
+    ) -> ClimerResult<Self>
+    where
+        T: ToString,
+        U: ToString,
+    {
         Ok(Self {
             target_time: parse_time(time, format)?,
             time: Time::zero(),
@@ -50,7 +54,7 @@ impl<'a> Timer<'a> {
         let now = Instant::now();
         let time_output = self.time_output();
         if let Some(output) = &mut self.output {
-            output.update(&format!("{}", time_output))?;
+            output.update(format!("{}", time_output))?;
         }
         let duration = now.duration_since(self.last_update);
         let time_since = Time::from(duration);
