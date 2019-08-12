@@ -10,9 +10,49 @@ use crate::error::{ClimerError, ClimerResult};
 use crate::settings::timer::*;
 use crate::time::Time;
 
+pub enum TimerState {
+    Stopped,
+    Running,
+    Paused,
+    Finished,
+}
+
+impl TimerState {
+    pub fn is_stopped(&self) -> bool {
+        if let TimerState::Stopped = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn is_running(&self) -> bool {
+        if let TimerState::Running = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn is_paused(&self) -> bool {
+        if let TimerState::Paused = self {
+            true
+        } else {
+            false
+        }
+    }
+
+    pub fn is_finished(&self) -> bool {
+        if let TimerState::Finished = self {
+            true
+        } else {
+            false
+        }
+    }
+}
+
 pub struct Timer {
-    pub running:     bool,
-    pub finished:    bool,
+    pub state:       TimerState,
     target_time:     Option<Time>,
     time:            Time,
     output:          Option<Output>,
@@ -33,8 +73,7 @@ impl Timer {
     /// it will never finish naturally, so instead you need to stop the timer when necessary.
     pub fn new(target_time: Option<Time>, output: Option<Output>) -> Self {
         Self {
-            running: false,
-            finished: false,
+            state: TimerState::Stopped,
             target_time,
             time: Time::zero(),
             output,
@@ -49,7 +88,7 @@ impl Timer {
     /// then don't call this method, instead call the `update` method to update the timer.
     pub fn run(&mut self) -> ClimerResult {
         self.start()?;
-        while self.running {
+        while self.state.is_running() {
             self.update()?;
             sleep(Duration::from_millis(self.update_delay_ms))
         }
@@ -60,44 +99,77 @@ impl Timer {
     /// Only call this method if you intend to update the timer manually
     /// by calling the `update` method.
     pub fn start(&mut self) -> ClimerResult {
-        if self.running {
-            return Err(ClimerError::TimerAlreadyRunning);
+        if self.state.is_stopped() || self.state.is_finished() {
+            self.state = TimerState::Running;
+            let now = Instant::now();
+            self.last_update = Some(now);
+            Ok(())
+        } else {
+            Err(ClimerError::TimerAlreadyRunning)
         }
-        self.running = true;
-        self.finished = false;
-        let now = Instant::now();
-        self.last_update = Some(now);
-        Ok(())
     }
 
     /// Stops the timer, after it has been started using the `start` method.
     pub fn stop(&mut self) -> ClimerResult {
-        if !self.running {
-            return Err(ClimerError::TimerNotRunning);
+        if self.state.is_running()
+            || self.state.is_paused()
+            || self.state.is_finished()
+        {
+            self.state = TimerState::Stopped;
+            self.last_update = None;
+            Ok(())
+        } else {
+            Err(ClimerError::TimerNotRunning)
         }
-        self.running = false;
-        self.last_update = None;
-        Ok(())
+    }
+
+    /// Pauses the timer.
+    pub fn pause(&mut self) -> ClimerResult {
+        match &self.state {
+            TimerState::Running => {
+                self.update()?;
+                self.last_update = None;
+                self.state = TimerState::Paused;
+                Ok(())
+            }
+            _ => Err(ClimerError::TimerNotRunning),
+        }
+    }
+
+    /// Resumes the timer from a paused state.
+    pub fn resume(&mut self) -> ClimerResult {
+        match &self.state {
+            TimerState::Paused => {
+                self.last_update = Some(Instant::now());
+                self.update()?;
+                self.state = TimerState::Running;
+                Ok(())
+            }
+            _ => Err(ClimerError::TimerAlreadyRunning),
+        }
     }
 
     /// Updates the timer.
     /// This will also attempt to write the remaining time to stdout or to a file,
     /// using the `Output` of this `Timer`.
     pub fn update(&mut self) -> ClimerResult {
-        if !self.running {
-            return Err(ClimerError::TimerNotRunning);
+        match &self.state {
+            TimerState::Running => {
+                let now = Instant::now();
+                self.print_output()?;
+                let duration =
+                    now.duration_since(self.last_update.unwrap_or(now));
+                let time_since = Time::from(duration);
+                self.time += time_since;
+                if self.target_time.is_some() {
+                    self.check_finished()?;
+                }
+                self.last_update = Some(now);
+                Ok(())
+            }
+            TimerState::Paused => Ok(()),
+            _ => Err(ClimerError::TimerNotRunning),
         }
-
-        let now = Instant::now();
-        self.print_output()?;
-        let duration = now.duration_since(self.last_update.unwrap_or(now));
-        let time_since = Time::from(duration);
-        self.time += time_since;
-        if self.target_time.is_some() {
-            self.check_finished()?;
-        }
-        self.last_update = Some(now);
-        Ok(())
     }
 
     /// Print the current time to stdout or to a file using this timer's `Output`
@@ -129,29 +201,29 @@ impl Timer {
     /// Check if the timer is finished.
     /// Returns a `ClimerError` if the timer isn't running, or no `target_time` was given.
     fn check_finished(&mut self) -> ClimerResult {
-        if !self.running {
-            return Err(ClimerError::TimerNotRunning);
-        }
-
-        if let Some(target_time) = self.target_time {
-            if self.time >= target_time {
-                //let time_output = self.time_output();
-                if let Some(output) = &mut self.output {
-                    //output.print(&format!("{}", time_output))?;
-                    output.print(FINISH_TEXT)?;
+        if self.state.is_running() {
+            if let Some(target_time) = self.target_time {
+                if self.time >= target_time {
+                    //let time_output = self.time_output();
+                    if let Some(output) = &mut self.output {
+                        //output.print(&format!("{}", time_output))?;
+                        output.print(FINISH_TEXT)?;
+                    }
+                    self.finish()?;
                 }
-                self.finish()?;
+                Ok(())
+            } else {
+                Err(ClimerError::TimerCannotFinish)
             }
-            Ok(())
         } else {
-            Err(ClimerError::TimerCannotFinish)
+            Err(ClimerError::TimerNotRunning)
         }
     }
 
     /// Finish the timer. This method should only be called from `check_finished`, which verifies
     /// that the timer has actually finished.
     fn finish(&mut self) -> ClimerResult {
-        self.finished = true;
+        self.state = TimerState::Finished;
         self.stop()
     }
 }
