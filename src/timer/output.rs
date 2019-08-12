@@ -43,6 +43,7 @@ impl<'a> Output<'a> {
         self.last_print = now;
         Ok(())
     }
+
     pub fn print(&mut self, to_print: &str) -> ClimerResult {
         if let Some(file) = &self.write_to_file {
             self.print_to_file(to_print, file)?;

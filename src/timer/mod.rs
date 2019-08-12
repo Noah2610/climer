@@ -9,7 +9,7 @@ pub use self::output::Output;
 use crate::error::ClimerResult;
 use crate::settings::timer::*;
 use crate::time::parser::parse_time;
-use crate::time::{Time, TimeBuilder};
+use crate::time::Time;
 
 pub struct Timer<'a> {
     target_time:     Time,

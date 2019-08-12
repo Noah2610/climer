@@ -1,13 +1,13 @@
 use super::Output;
 use super::Timer;
-use crate::time::Time;
 use crate::error::ClimerResult;
+use crate::time::Time;
 
 pub struct TimerBuilder<'a> {
     time:           &'a str,
     quiet:          bool,
     format:         Option<&'a str>,
-    output:         Option<&'a str>,
+    output_format:  Option<&'a str>,
     print_interval: Option<Time>,
     write:          Option<&'a str>,
 }
@@ -18,7 +18,7 @@ impl<'a> TimerBuilder<'a> {
             time,
             quiet: false,
             format: None,
-            output: None,
+            output_format: None,
             print_interval: None,
             write: None,
         }
@@ -44,15 +44,19 @@ impl<'a> TimerBuilder<'a> {
         self
     }
 
-    pub fn build(&self) -> ClimerResult<Timer> {
+    pub fn build(self) -> ClimerResult<Timer<'a>> {
         Ok(Timer::new(self.time, self.format, self.build_output())?)
     }
 
-    fn build_output(&self) -> Option<Output> {
+    fn build_output(self) -> Option<Output<'a>> {
         if self.quiet {
             None
         } else {
-            Some(Output::new(self.output, self.print_interval, self.write))
+            Some(Output::new(
+                self.output_format,
+                self.print_interval,
+                self.write,
+            ))
         }
     }
 }
