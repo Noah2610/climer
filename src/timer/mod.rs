@@ -99,6 +99,7 @@ impl Timer {
     /// Only call this method if you intend to update the timer manually
     /// by calling the `update` method.
     pub fn start(&mut self) -> ClimerResult {
+        self.time = Time::zero();
         self.state = TimerState::Running;
         let now = Instant::now();
         self.last_update = Some(now);
