@@ -12,6 +12,7 @@ pub mod timer;
 
 pub mod prelude {
     pub use super::error::{ClimerError, ClimerResult};
+    pub use super::time::prelude::*;
     pub use super::timer::output::Output;
     pub use super::timer::{Timer, TimerBuilder, TimerState};
 }
