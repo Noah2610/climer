@@ -3,19 +3,20 @@ pub mod prelude {
     pub use super::TimeBuilder;
 }
 
-pub mod parser;
 mod builder;
+pub mod parser;
 mod time_conversion;
 
+use std::cmp::{self, Ordering};
 use std::fmt;
-use std::time::Duration;
 use std::ops;
-use std::cmp::{ self, Ordering };
+use std::time::Duration;
 
 pub use self::builder::TimeBuilder;
 pub use self::time_conversion::TimeConversion;
 
 #[derive(Debug, Clone, Copy, PartialEq, TimeConversion)]
+#[cfg_attr(feature = "serialize", derive(Serialize, Deserialize))]
 pub struct Time {
     hours:        u64,
     minutes:      u64,
@@ -25,58 +26,80 @@ pub struct Time {
 }
 
 impl Time {
-    pub fn new(hours: u64, minutes: u64, seconds: u64, milliseconds: u64, nanoseconds: u64) -> Self {
-        Self { hours, minutes, seconds, milliseconds, nanoseconds }
+    pub fn new(
+        hours: u64,
+        minutes: u64,
+        seconds: u64,
+        milliseconds: u64,
+        nanoseconds: u64,
+    ) -> Self {
+        Self {
+            hours,
+            minutes,
+            seconds,
+            milliseconds,
+            nanoseconds,
+        }
     }
 
     pub fn zero() -> Self {
-        Self { hours: 0, minutes: 0, seconds: 0, milliseconds: 0, nanoseconds: 0 }
+        Self {
+            hours:        0,
+            minutes:      0,
+            seconds:      0,
+            milliseconds: 0,
+            nanoseconds:  0,
+        }
     }
 
     pub fn as_hours(&self) -> f32 {
-        self.hours as f32 +
-            self.minutes as f32 / 60.0 +
-            self.seconds as f32 / 60.0 / 60.0 +
-            self.milliseconds as f32 / 1000.0 / 60.0 / 60.0 +
-            self.nanoseconds as f32 / 1_000_000.0 / 1000.0 / 60.0 / 60.0
+        self.hours as f32
+            + self.minutes as f32 / 60.0
+            + self.seconds as f32 / 60.0 / 60.0
+            + self.milliseconds as f32 / 1000.0 / 60.0 / 60.0
+            + self.nanoseconds as f32 / 1_000_000.0 / 1000.0 / 60.0 / 60.0
     }
 
     pub fn as_minutes(&self) -> f32 {
-        self.hours as f32 * 60.0 +
-            self.minutes as f32 +
-            self.seconds as f32 / 60.0 +
-            self.milliseconds as f32 / 1000.0 / 60.0 +
-            self.nanoseconds as f32 / 1_000_000.0 / 1000.0 / 60.0
+        self.hours as f32 * 60.0
+            + self.minutes as f32
+            + self.seconds as f32 / 60.0
+            + self.milliseconds as f32 / 1000.0 / 60.0
+            + self.nanoseconds as f32 / 1_000_000.0 / 1000.0 / 60.0
     }
 
     pub fn as_seconds(&self) -> f32 {
-        self.hours as f32 * 60.0 * 60.0 +
-            self.minutes as f32 * 60.0 +
-            self.seconds as f32 +
-            self.milliseconds as f32 / 1000.0 +
-            self.nanoseconds as f32 / 1_000_000.0 / 1000.0
+        self.hours as f32 * 60.0 * 60.0
+            + self.minutes as f32 * 60.0
+            + self.seconds as f32
+            + self.milliseconds as f32 / 1000.0
+            + self.nanoseconds as f32 / 1_000_000.0 / 1000.0
     }
 
     pub fn as_milliseconds(&self) -> f32 {
-        self.hours as f32 * 60.0 * 60.0 * 1000.0 +
-            self.minutes as f32 * 60.0 * 1000.0 +
-            self.seconds as f32 * 1000.0 +
-            self.milliseconds as f32 +
-            self.nanoseconds as f32 / 1_000_000.0
+        self.hours as f32 * 60.0 * 60.0 * 1000.0
+            + self.minutes as f32 * 60.0 * 1000.0
+            + self.seconds as f32 * 1000.0
+            + self.milliseconds as f32
+            + self.nanoseconds as f32 / 1_000_000.0
     }
 
     pub fn as_nanoseconds(&self) -> f32 {
-        self.hours as f32 * 60.0 * 60.0 * 1000.0 * 1_000_000.0 +
-            self.minutes as f32 * 60.0 * 1000.0 * 1_000_000.0 +
-            self.seconds as f32 * 1000.0 * 1_000_000.0 +
-            self.milliseconds as f32 * 1_000_000.0 +
-            self.nanoseconds as f32
+        self.hours as f32 * 60.0 * 60.0 * 1000.0 * 1_000_000.0
+            + self.minutes as f32 * 60.0 * 1000.0 * 1_000_000.0
+            + self.seconds as f32 * 1000.0 * 1_000_000.0
+            + self.milliseconds as f32 * 1_000_000.0
+            + self.nanoseconds as f32
     }
 }
 
 impl fmt::Display for Time {
     fn fmt(&self, f: &mut fmt::Formatter) -> Result<(), fmt::Error> {
-        write!(f, "{:02}:{:02}:{:02}.{:03}", self.hours, self.minutes, self.seconds, self.milliseconds)
+        write!(
+            f,
+            "{:02}:{:02}:{:02}.{:03}",
+            self.hours, self.minutes, self.seconds, self.milliseconds
+        )
     }
 }
 
@@ -116,7 +139,8 @@ impl ops::AddAssign for Time {
 impl ops::Sub for Time {
     type Output = Time;
     fn sub(self, other: Time) -> Self {
-        let mut nanoseconds = self.as_nanoseconds() as u64 - other.as_nanoseconds() as u64;
+        let mut nanoseconds =
+            self.as_nanoseconds() as u64 - other.as_nanoseconds() as u64;
         let mut milliseconds = nanoseconds / 1_000_000;
         nanoseconds -= milliseconds * 1_000_000;
         let mut seconds = milliseconds / 1000;

@@ -1,6 +1,6 @@
 [package]
 name = "climer"
-version = "0.3.4"
+version = "0.3.5"
 authors = ["Noah Rosenzweig <rosenzweig.noah@gmail.com>"]
 edition = "2018"
 description = "CLI timer app"
@@ -14,9 +14,11 @@ license = "MIT"
 regex = "1.1.0"
 climer_derive = { path = "./climer_derive", version = "0.1.0" }
 clap = { version = "2.32.0", optional = true }
+serde = { version = "1.0.89", optional = true }
 
 [features]
 cli = ["clap"]
+serialize = ["serde"]
 
 [[bin]]
 name = "climer"

@@ -1,6 +1,9 @@
 extern crate regex;
 #[macro_use]
 extern crate climer_derive;
+#[cfg(feature = "serialize")]
+#[macro_use]
+extern crate serde;
 
 mod settings;
 #[macro_use]
