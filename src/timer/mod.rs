@@ -198,7 +198,7 @@ impl Timer {
                         //output.print(&format!("{}", time_output))?;
                         output.print(FINISH_TEXT)?;
                     }
-                    self.finish()?;
+                    self.finish_without_update()?;
                 }
                 Ok(())
             } else {
@@ -211,6 +211,14 @@ impl Timer {
 
     /// Finish the timer.
     pub fn finish(&mut self) -> ClimerResult {
+        self.update()?; // Update one last time, to get a correct final time
+        self.finish_without_update()
+    }
+
+    /// Finish the timer without updating one final time.
+    /// This is only used internally from the `check_finished` method,
+    /// to avoid recursion.
+    fn finish_without_update(&mut self) -> ClimerResult {
         self.stop()?;
         self.state = TimerState::Finished;
         Ok(())
