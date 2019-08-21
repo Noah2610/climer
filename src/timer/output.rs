@@ -7,6 +7,7 @@ use crate::helpers::*;
 use crate::settings::output::*;
 use crate::time::prelude::*;
 
+#[derive(Clone)]
 pub struct Output {
     format:         String,
     write_to_file:  Option<String>,

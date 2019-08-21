@@ -14,7 +14,7 @@ fn main() -> ClimerResult {
 
     if let Some(times) = matches.values_of("time") {
         let time = &times.collect::<String>();
-        builder = builder.time(time);
+        builder = builder.time_str(time);
     }
 
     if let Some(format) = matches.value_of("format") {

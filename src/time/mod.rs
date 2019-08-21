@@ -42,6 +42,10 @@ impl Time {
         }
     }
 
+    pub fn builder() -> TimeBuilder {
+        TimeBuilder::new()
+    }
+
     pub fn zero() -> Self {
         Self {
             hours:        0,

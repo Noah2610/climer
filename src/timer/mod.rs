@@ -10,6 +10,7 @@ use crate::error::{ClimerError, ClimerResult};
 use crate::settings::timer::*;
 use crate::time::Time;
 
+#[derive(Clone)]
 pub enum TimerState {
     Stopped,
     Running,
@@ -51,6 +52,7 @@ impl TimerState {
     }
 }
 
+#[derive(Clone)]
 pub struct Timer {
     pub state:       TimerState,
     target_time:     Option<Time>,

@@ -7,7 +7,8 @@ use crate::time::Time;
 /// The builder struct for `Timer`.
 #[derive(Default)]
 pub struct TimerBuilder {
-    time:           Option<String>,
+    time:           Option<Time>,
+    time_str:       Option<String>,
     quiet:          bool,
     format:         Option<String>,
     output_format:  Option<String>,
@@ -16,12 +17,18 @@ pub struct TimerBuilder {
 }
 
 impl TimerBuilder {
+    /// Set the `time` as a `Time`.
+    pub fn time(mut self, time: Time) -> Self {
+        self.time = Some(time);
+        self
+    }
+
     /// Set the `time` as a string.
-    pub fn time<T>(mut self, time: T) -> Self
+    pub fn time_str<T>(mut self, time_str: T) -> Self
     where
         T: ToString,
     {
-        self.time = Some(time.to_string());
+        self.time_str = Some(time_str.to_string());
         self
     }
 
@@ -58,8 +65,10 @@ impl TimerBuilder {
 
     /// Build a `Timer`.
     pub fn build(self) -> ClimerResult<Timer> {
-        let time = if let Some(time) = self.time.as_ref() {
-            Some(parse_time(time, self.format.as_ref())?)
+        let time = if let Some(time) = self.time {
+            Some(time)
+        } else if let Some(time_str) = self.time_str.as_ref() {
+            Some(parse_time(time_str, self.format.as_ref())?)
         } else {
             None
         };
