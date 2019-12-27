@@ -57,6 +57,7 @@ pub struct Timer {
     pub state:       TimerState,
     target_time:     Option<Time>,
     time:            Time,
+    start_time:      Option<Time>,
     output:          Option<Output>,
     update_delay_ms: u64,
     last_update:     Option<Instant>,
@@ -78,10 +79,17 @@ impl Timer {
             state: TimerState::Stopped,
             target_time,
             time: Time::zero(),
+            start_time: None,
             output,
             update_delay_ms: 100, // TODO
             last_update: None,
         }
+    }
+
+    /// Set the starting `time` value.
+    /// Used for starting the timer with a starting time other than 0.
+    pub fn set_start_time(&mut self, start_time: Time) {
+        self.start_time = Some(start_time);
     }
 
     /// Run the timer.
@@ -101,7 +109,11 @@ impl Timer {
     /// Only call this method if you intend to update the timer manually
     /// by calling the `update` method.
     pub fn start(&mut self) -> ClimerResult {
-        self.time = Time::zero();
+        self.time = self
+            .start_time
+            .as_ref()
+            .map(Clone::clone)
+            .unwrap_or_else(Time::zero);
         self.state = TimerState::Running;
         let now = Instant::now();
         self.last_update = Some(now);

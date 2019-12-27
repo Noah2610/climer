@@ -84,4 +84,10 @@ see the note at the bottom of the help screen for more info.
 For now, it is recommended to just redirect the stdout from your shell.";
 
     }
+
+    pub mod start_time {
+        pub const HELP: &'static str = "Set the starting time for the timer";
+        pub const LONG_HELP: &'static str =
+            "Set the starting time for the timer.\nDefaults to _zero_";
+    }
 }

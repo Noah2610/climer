@@ -5,6 +5,7 @@ extern crate climer;
 mod cli;
 
 use climer::error::*;
+use climer::time::parser::parse_time;
 use climer::time::TimeBuilder;
 use climer::timer::TimerBuilder;
 
@@ -36,6 +37,11 @@ fn main() -> ClimerResult {
 
     if let Some(write) = matches.value_of("write") {
         builder = builder.write(write);
+    }
+
+    if let Some(start_time_str) = matches.value_of("start_time") {
+        let start_time = parse_time::<_, String>(start_time_str, None)?;
+        builder = builder.start_time(start_time);
     }
 
     builder = builder.quiet(matches.is_present("quiet"));

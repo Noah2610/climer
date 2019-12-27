@@ -11,7 +11,7 @@ function main {
   if should_run_in_terminal; then
     run_terminal "$cmd"
   else
-    $cmd
+    eval "$cmd"
   fi
 }
 

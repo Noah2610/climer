@@ -9,6 +9,7 @@ use crate::time::Time;
 pub struct TimerBuilder {
     time:           Option<Time>,
     time_str:       Option<String>,
+    start_time:     Option<Time>,
     quiet:          bool,
     format:         Option<String>,
     output_format:  Option<String>,
@@ -29,6 +30,12 @@ impl TimerBuilder {
         T: ToString,
     {
         self.time_str = Some(time_str.to_string());
+        self
+    }
+
+    /// Set the `start_time` `Time`.
+    pub fn start_time(mut self, start_time: Time) -> Self {
+        self.start_time = Some(start_time);
         self
     }
 
@@ -72,8 +79,17 @@ impl TimerBuilder {
         } else {
             None
         };
+
+        let start_time = self.start_time;
+
         let output = self.build_output();
-        Ok(Timer::new(time, output))
+        let mut timer = Timer::new(time, output);
+
+        if let Some(start_time) = start_time {
+            timer.set_start_time(start_time);
+        }
+
+        Ok(timer)
     }
 
     /// Build the `Output` used by the `Timer`.

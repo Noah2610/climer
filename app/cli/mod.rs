@@ -58,5 +58,13 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .long("write")
                 .takes_value(true),
         )
+        .arg(
+            Arg::with_name("start_time")
+                .help(args::start_time::HELP)
+                .long_help(args::start_time::LONG_HELP)
+                .short("s")
+                .long("start")
+                .takes_value(true),
+        )
         .get_matches()
 }
