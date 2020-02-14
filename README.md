@@ -38,9 +38,8 @@ climer --help  # More detailed help
 ## Library crate
 In your `Cargo.toml` ...
 ```toml
-# TODO: version
 [dependencies]
-climer = { version = "*", default-features = false }
+climer = { version = "0.6.0", default-features = false }
 ```
 See below for available features.
 
