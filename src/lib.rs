@@ -1,3 +1,4 @@
+#[cfg(feature = "parser")]
 extern crate regex;
 #[macro_use]
 extern crate climer_derive;

@@ -3,8 +3,10 @@ pub mod prelude {
     pub use super::TimeBuilder;
 }
 
-mod builder;
+#[cfg(feature = "parser")]
 pub mod parser;
+
+mod builder;
 mod time_conversion;
 
 use std::cmp::{self, Ordering};

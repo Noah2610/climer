@@ -11,14 +11,17 @@ categories = ["command-line-utilities"]
 license = "MIT"
 
 [dependencies]
-regex = "1.1.0"
-climer_derive = { path = "./climer_derive", version = "0.1.0" }
 clap = { version = "2.32.0", optional = true }
+climer_derive = { path = "./climer_derive", version = "0.1.0" }
+regex = { version = "1.1.0", optional = true }
 serde = { version = "1.0.89", optional = true }
 
 [features]
-cli = ["clap"]
+default = []
+
+cli = ["clap", "parser"]
 serialize = ["serde"]
+parser = ["regex"]
 
 [[bin]]
 name = "climer"

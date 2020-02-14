@@ -1,6 +1,7 @@
 use super::Output;
 use super::Timer;
 use crate::error::ClimerResult;
+#[cfg(feature = "parser")]
 use crate::time::parser::parse_time;
 use crate::time::Time;
 
@@ -8,6 +9,7 @@ use crate::time::Time;
 #[derive(Default)]
 pub struct TimerBuilder {
     time:           Option<Time>,
+    #[cfg(feature = "parser")]
     time_str:       Option<String>,
     start_time:     Option<Time>,
     quiet:          bool,
@@ -25,6 +27,7 @@ impl TimerBuilder {
     }
 
     /// Set the `time` as a string.
+    #[cfg(feature = "parser")]
     pub fn time_str<T>(mut self, time_str: T) -> Self
     where
         T: ToString,
@@ -71,14 +74,8 @@ impl TimerBuilder {
     }
 
     /// Build a `Timer`.
-    pub fn build(self) -> ClimerResult<Timer> {
-        let time = if let Some(time) = self.time {
-            Some(time)
-        } else if let Some(time_str) = self.time_str.as_ref() {
-            Some(parse_time(time_str, self.format.as_ref())?)
-        } else {
-            None
-        };
+    pub fn build(mut self) -> ClimerResult<Timer> {
+        let time = self.build_time()?;
 
         let start_time = self.start_time;
 
@@ -90,6 +87,24 @@ impl TimerBuilder {
         }
 
         Ok(timer)
+    }
+
+    fn build_time(&mut self) -> ClimerResult<Option<Time>> {
+        Ok(self.time.take().or(self.time_from_str()?))
+    }
+
+    #[cfg(feature = "parser")]
+    fn time_from_str(&self) -> ClimerResult<Option<Time>> {
+        if let Some(time_str) = self.time_str.as_ref() {
+            Ok(Some(parse_time(time_str, self.format.as_ref())?))
+        } else {
+            Ok(None)
+        }
+    }
+
+    #[cfg(not(feature = "parser"))]
+    fn time_from_str(&self) -> ClimerResult<Option<Time>> {
+        Ok(None)
     }
 
     /// Build the `Output` used by the `Timer`.
