@@ -1,56 +1,18 @@
-mod builder;
 pub mod output;
+
+mod builder;
+mod state;
+
+pub use builder::TimerBuilder;
+pub use output::Output;
+pub use state::TimerState;
 
 use std::thread::sleep;
 use std::time::{Duration, Instant};
 
-pub use self::builder::TimerBuilder;
-pub use self::output::Output;
 use crate::error::{ClimerError, ClimerResult};
 use crate::settings::timer::*;
 use crate::time::Time;
-
-#[derive(Clone)]
-pub enum TimerState {
-    Stopped,
-    Running,
-    Paused,
-    Finished,
-}
-
-impl TimerState {
-    pub fn is_stopped(&self) -> bool {
-        if let TimerState::Stopped = self {
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn is_running(&self) -> bool {
-        if let TimerState::Running = self {
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn is_paused(&self) -> bool {
-        if let TimerState::Paused = self {
-            true
-        } else {
-            false
-        }
-    }
-
-    pub fn is_finished(&self) -> bool {
-        if let TimerState::Finished = self {
-            true
-        } else {
-            false
-        }
-    }
-}
 
 #[derive(Clone)]
 pub struct Timer {
@@ -86,10 +48,27 @@ impl Timer {
         }
     }
 
+    /// Set a new target `Time`.
+    pub fn set_target_time(&mut self, target_time: Time) {
+        self.target_time = Some(target_time);
+    }
+
+    /// Removes the target `Time`.
+    /// If the timer has no target time, then it acts like a stopwatch,
+    /// endlessly counting upwards.
+    pub fn clear_target_time(&mut self) {
+        self.target_time = None;
+    }
+
     /// Set the starting `time` value.
     /// Used for starting the timer with a starting time other than 0.
     pub fn set_start_time(&mut self, start_time: Time) {
         self.start_time = Some(start_time);
+    }
+
+    /// Removes the start `Time`.
+    pub fn clear_start_time(&mut self) {
+        self.start_time = None;
     }
 
     /// Run the timer.
@@ -108,6 +87,7 @@ impl Timer {
     /// Start the timer. Do not call this method directly if you are using the `run` method.
     /// Only call this method if you intend to update the timer manually
     /// by calling the `update` method.
+    /// The `start` method can also be used as a _restart_.
     pub fn start(&mut self) -> ClimerResult {
         self.time = self
             .start_time
