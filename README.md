@@ -1,19 +1,19 @@
 # Climer
 A simple CLI timer, written in Rust.
 
-## As a CLI app
+## CLI app
 This project's main use is as a CLI app, but it can also be used as a crate / library.
 
 ### Installation
 #### From [crates.io]
 ```
-cargo install climer --features cli
+cargo install climer
 ```
 #### From source
 You will need `cargo` to compile from source, which is shipped with Rust.
 ```
 git clone https://github.com/Noah2610/climer # Clone the repository
-cargo install --path ./climer --features cli # Compile and install
+cargo install --path ./climer                # Compile and install
 ```
 
 ### Usage
@@ -35,7 +35,28 @@ climer -h      # Brief help
 climer --help  # More detailed help
 ```
 
-## As a crate
-__TODO__
+## Library crate
+In your `Cargo.toml` ...
+```toml
+# TODO: version
+[dependencies]
+climer = { version = "*", default-features = false }
+```
+See below for available features.
 
+### Compilation features
+| Name        | Description | Default? |
+|:----------- |:----------- |:--------:|
+| `cli`       | Required for the binary app. You should disable this for library crates | `true` |
+| `serialize` | Adds `serde` dependency and implements `Serialize` and `Deserialize` for `time::Time` | `false` |
+| `parser`    | Adds `regex` dependency and adds `time::parser` module with functions for parsing a time from a given string | <small>enabled by `cli` feature</small> |
+
+### Documentation
+Documentation should be available at [docs.rs/climer][docs].
+
+## License
+[MIT License][license]
+
+[license]:   ./LICENSE
 [crates.io]: https://crates.io/crates/climer
+[docs]:      https://docs.rs/climer
