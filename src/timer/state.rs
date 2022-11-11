@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum TimerState {
     Stopped,
     Running,
@@ -8,34 +8,18 @@ pub enum TimerState {
 
 impl TimerState {
     pub fn is_stopped(&self) -> bool {
-        if let TimerState::Stopped = self {
-            true
-        } else {
-            false
-        }
+        *self == TimerState::Stopped
     }
 
     pub fn is_running(&self) -> bool {
-        if let TimerState::Running = self {
-            true
-        } else {
-            false
-        }
+        *self == TimerState::Running
     }
 
     pub fn is_paused(&self) -> bool {
-        if let TimerState::Paused = self {
-            true
-        } else {
-            false
-        }
+        *self == TimerState::Paused
     }
 
     pub fn is_finished(&self) -> bool {
-        if let TimerState::Finished = self {
-            true
-        } else {
-            false
-        }
+        *self == TimerState::Finished
     }
 }
