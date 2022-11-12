@@ -8,15 +8,16 @@ use crate::time::Time;
 /// The builder struct for `Timer`.
 #[derive(Default)]
 pub struct TimerBuilder {
-    time:           Option<Time>,
+    time: Option<Time>,
     #[cfg(feature = "parser")]
-    time_str:       Option<String>,
-    start_time:     Option<Time>,
-    quiet:          bool,
-    format:         Option<String>,
-    output_format:  Option<String>,
+    time_str: Option<String>,
+    start_time: Option<Time>,
+    quiet: bool,
+    format: Option<String>,
+    output_format: Option<String>,
     print_interval: Option<Time>,
-    write:          Option<String>,
+    write: Option<String>,
+    continue_after_finish: bool,
 }
 
 impl TimerBuilder {
@@ -73,11 +74,21 @@ impl TimerBuilder {
         self
     }
 
+    /// Specify if timer should continue timing into negative time after it finishes.
+    pub fn continue_after_finish(
+        mut self,
+        continue_after_finish: bool,
+    ) -> Self {
+        self.continue_after_finish = continue_after_finish;
+        self
+    }
+
     /// Build a `Timer`.
     pub fn build(mut self) -> ClimerResult<Timer> {
         let time = self.build_time()?;
 
         let start_time = self.start_time;
+        let continue_after_finish = self.continue_after_finish;
 
         let output = self.build_output();
         let mut timer = Timer::new(time, output);
@@ -85,6 +96,8 @@ impl TimerBuilder {
         if let Some(start_time) = start_time {
             timer.set_start_time(start_time);
         }
+
+        timer.set_continue_after_finish(continue_after_finish);
 
         Ok(timer)
     }

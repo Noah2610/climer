@@ -27,6 +27,13 @@ pub fn parse<'a>() -> ArgMatches<'a> {
                 .long("quiet"),
         )
         .arg(
+            Arg::with_name("continue")
+                .help(args::arg_continue::HELP)
+                .long_help(args::arg_continue::LONG_HELP)
+                .short("c")
+                .long("continue"),
+        )
+        .arg(
             Arg::with_name("format") // TODO
                 .help(args::format::HELP)
                 .long_help(args::format::LONG_HELP)

@@ -16,13 +16,14 @@ use crate::time::Time;
 
 #[derive(Clone)]
 pub struct Timer {
-    pub state:       TimerState,
-    target_time:     Option<Time>,
-    time:            Time,
-    start_time:      Option<Time>,
-    output:          Option<Output>,
+    pub state: TimerState,
+    target_time: Option<Time>,
+    time: Time,
+    start_time: Option<Time>,
+    continue_after_finish: bool,
+    output: Option<Output>,
     update_delay_ms: u64,
-    last_update:     Option<Instant>,
+    last_update: Option<Instant>,
 }
 
 impl Timer {
@@ -42,6 +43,7 @@ impl Timer {
             target_time,
             time: Time::zero(),
             start_time: None,
+            continue_after_finish: false,
             output,
             update_delay_ms: 100, // TODO
             last_update: None,
@@ -51,6 +53,10 @@ impl Timer {
     /// Set a new target `Time`.
     pub fn set_target_time(&mut self, target_time: Time) {
         self.target_time = Some(target_time);
+    }
+
+    pub fn set_continue_after_finish(&mut self, continue_after_finish: bool) {
+        self.continue_after_finish = continue_after_finish;
     }
 
     /// Removes the target `Time`.
@@ -145,9 +151,11 @@ impl Timer {
                     now.duration_since(self.last_update.unwrap_or(now));
                 let time_since = Time::from(duration);
                 self.time += time_since;
+
                 if self.target_time.is_some() {
                     self.check_finished()?;
                 }
+
                 self.last_update = Some(now);
                 Ok(())
             }
@@ -184,22 +192,29 @@ impl Timer {
     /// Check if the timer is finished.
     /// Returns a `ClimerError` if the timer isn't running, or no `target_time` was given.
     fn check_finished(&mut self) -> ClimerResult {
-        if self.state.is_running() {
-            if let Some(target_time) = self.target_time {
-                if self.time >= target_time {
-                    //let time_output = self.time_output();
+        if !self.state.is_running() {
+            return Err(ClimerError::TimerNotRunning);
+        }
+
+        if let Some(target_time) = self.target_time {
+            if self.time >= target_time {
+                if self.continue_after_finish {
+                    self.last_update = Some(Instant::now());
+                    self.target_time = None;
+                    self.time = Time::zero();
                     if let Some(output) = &mut self.output {
-                        //output.print(&format!("{}", time_output))?;
+                        output.set_prefix(Some("-".to_string()));
+                    }
+                } else {
+                    if let Some(output) = &mut self.output {
                         output.print(FINISH_TEXT)?;
                     }
                     self.finish_without_update()?;
                 }
-                Ok(())
-            } else {
-                Err(ClimerError::TimerCannotFinish)
             }
+            Ok(())
         } else {
-            Err(ClimerError::TimerNotRunning)
+            Err(ClimerError::TimerCannotFinish)
         }
     }
 

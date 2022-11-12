@@ -54,6 +54,14 @@ This means, the timer will count upwards and never finish naturally.";
         pub const LONG_HELP: &'static str = HELP;
     }
 
+    pub mod arg_continue {
+        pub const HELP: &'static str =
+            "Continue running timer after it finishes.";
+        pub const LONG_HELP: &'static str = "Continue running timer into negative time after the timer finishes.\n\
+            The timer will run endlessly with this flag set.\n\
+            Does nothing when no target time is given.";
+    }
+
     pub mod format {
         pub const HELP: &'static str =
             "(UNIMPLEMENTED) Format for time input as string.";
@@ -82,7 +90,6 @@ Write output to file instead of stdout.
 NOTE: This doesn't quite work correctly yet,
 see the note at the bottom of the help screen for more info.
 For now, it is recommended to just redirect the stdout from your shell.";
-
     }
 
     pub mod start_time {

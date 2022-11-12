@@ -18,6 +18,8 @@ fn main() -> ClimerResult {
         builder = builder.time_str(time);
     }
 
+    builder = builder.continue_after_finish(matches.is_present("continue"));
+
     if let Some(format) = matches.value_of("format") {
         builder = builder.format(format);
     }

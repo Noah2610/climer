@@ -9,10 +9,11 @@ use crate::time::prelude::*;
 
 #[derive(Clone)]
 pub struct Output {
-    format:         String,
-    write_to_file:  Option<String>,
+    format: String,
+    write_to_file: Option<String>,
     print_interval: Time,
-    last_print:     Instant,
+    last_print: Instant,
+    prefix: Option<String>,
 }
 
 impl Output {
@@ -26,16 +27,17 @@ impl Output {
         U: ToString,
     {
         Self {
-            format:         format
+            format: format
                 .map(|s| s.to_string())
                 .unwrap_or(DEFAULT_FORMAT.to_string()),
-            write_to_file:  write_to_file.map(|s| s.to_string()),
+            write_to_file: write_to_file.map(|s| s.to_string()),
             print_interval: print_interval.unwrap_or(
                 TimeBuilder::new()
                     .milliseconds(DEFAULT_PRINT_INTERVAL_MS)
                     .build(),
             ),
-            last_print:     Instant::now(),
+            last_print: Instant::now(),
+            prefix: None,
         }
     }
 
@@ -66,11 +68,15 @@ impl Output {
         Ok(())
     }
 
+    pub fn set_prefix(&mut self, prefix: Option<String>) {
+        self.prefix = prefix;
+    }
+
     fn print_to_stdout<T>(&self, to_print: T) -> ClimerResult
     where
         T: ToString,
     {
-        print!("\r{}", to_print.to_string());
+        print!("\r{}", self.format_to_print(to_print));
         flush_stdout()
     }
 
@@ -80,9 +86,20 @@ impl Output {
         U: ToString,
     {
         let mut buffer = File::create(file.to_string())?;
-        buffer.write_all(to_print.to_string().as_bytes())?;
+        buffer.write_all(self.format_to_print(to_print).as_bytes())?;
         buffer.flush()?;
 
         Ok(())
+    }
+
+    fn format_to_print<T>(&self, to_print: T) -> String
+    where
+        T: ToString,
+    {
+        if let Some(prefix) = self.prefix.as_ref() {
+            format!("{}{}", prefix, to_print.to_string())
+        } else {
+            to_print.to_string()
+        }
     }
 }
