@@ -39,7 +39,7 @@ climer --help  # More detailed help
 In your `Cargo.toml` ...
 ```toml
 [dependencies]
-climer = { version = "0.6.0", default-features = false }
+climer = { version = "0.7.0", default-features = false }
 ```
 See below for available features.
 
