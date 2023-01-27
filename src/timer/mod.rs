@@ -8,11 +8,26 @@ pub use output::Output;
 pub use state::TimerState;
 
 use std::thread::sleep;
-use std::time::{Duration, Instant};
+use std::time::{Duration, Instant, SystemTime};
 
 use crate::error::{ClimerError, ClimerResult};
 use crate::settings::timer::*;
 use crate::time::Time;
+
+#[derive(Clone)]
+struct TimerLastUpdate {
+    pub time: SystemTime,
+    pub instant: Instant,
+}
+
+impl TimerLastUpdate {
+    pub fn now() -> Self {
+        Self {
+            time: SystemTime::now(),
+            instant: Instant::now(),
+        }
+    }
+}
 
 #[derive(Clone)]
 pub struct Timer {
@@ -23,7 +38,7 @@ pub struct Timer {
     continue_after_finish: bool,
     output: Option<Output>,
     update_delay_ms: u64,
-    last_update: Option<Instant>,
+    last_update: Option<TimerLastUpdate>,
 }
 
 impl Timer {
@@ -101,8 +116,8 @@ impl Timer {
             .map(Clone::clone)
             .unwrap_or_else(Time::zero);
         self.state = TimerState::Running;
-        let now = Instant::now();
-        self.last_update = Some(now);
+        self.last_update = Some(TimerLastUpdate::now());
+
         Ok(())
     }
 
@@ -130,7 +145,7 @@ impl Timer {
     pub fn resume(&mut self) -> ClimerResult {
         match &self.state {
             TimerState::Paused => {
-                self.last_update = Some(Instant::now());
+                self.last_update = Some(TimerLastUpdate::now());
                 self.update()?;
                 self.state = TimerState::Running;
                 Ok(())
@@ -145,10 +160,19 @@ impl Timer {
     pub fn update(&mut self) -> ClimerResult {
         match &self.state {
             TimerState::Running => {
-                let now = Instant::now();
+                let now = TimerLastUpdate::now();
                 self.print_output()?;
+
+                let last_update = self
+                    .last_update
+                    .take()
+                    .unwrap_or_else(TimerLastUpdate::now);
+
                 let duration =
-                    now.duration_since(self.last_update.unwrap_or(now));
+                    now.time.duration_since(last_update.time).unwrap_or_else(
+                        |_| now.instant.duration_since(last_update.instant),
+                    );
+
                 let time_since = Time::from(duration);
                 self.time += time_since;
 
@@ -199,7 +223,7 @@ impl Timer {
         if let Some(target_time) = self.target_time {
             if self.time >= target_time {
                 if self.continue_after_finish {
-                    self.last_update = Some(Instant::now());
+                    self.last_update = Some(TimerLastUpdate::now());
                     self.target_time = None;
                     self.time = Time::zero();
                     if let Some(output) = &mut self.output {
