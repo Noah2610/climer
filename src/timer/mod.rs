@@ -225,7 +225,7 @@ impl Timer {
                 if self.continue_after_finish {
                     self.last_update = Some(TimerLastUpdate::now());
                     self.target_time = None;
-                    self.time = Time::zero();
+                    self.time = self.time - target_time;
                     if let Some(output) = &mut self.output {
                         output.set_prefix(Some("-".to_string()));
                     }
